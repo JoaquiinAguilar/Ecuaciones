@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Solver Pro</title>
+    {% load static %}
+    <!-- 1. Cargar Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 2. Cargar MathJax para renderizar LaTeX -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="stylesheet" href="{% static 'math_solver/css/style.css' %}">
+</head>
+<body class="bg-gray-100 font-sans antialiased">
+
+    <div class="container mx-auto p-4 md:p-8 min-h-screen">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-blue-700">Ecuaciones Diferenciales</h1>
+            <p class="text-lg text-gray-600">Ingenieria en Sistemas Computacionales 9no semestre</p>
+        </header>
+
+        <main class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <!-- Columna de la Izquierda: Formularios -->
+            <div class="bg-white p-6 rounded-2xl shadow-xl">
+                <!-- Contenedor de Pestañas -->
+                <div class="border-b border-gray-200 mb-6">
+                    <nav id="tabs" class="flex flex-wrap -mb-px">
+                        <!-- Los data-tab DEBEN coincidir con los valores de solver_type en views.py -->
+                        <button class="tab-btn" data-tab="quadratic">Cuadrático</button>
+                        <button class="tab-btn" data-tab="bernoulli">Bernoulli</button>
+                        <button class="tab-btn" data-tab="cauchy">Cauchy-Euler</button>
+                        <button class="tab-btn" data-tab="clairaut">Clairaut</button>
+                        <button class="tab-btn" data-tab="riccati">Riccati</button>
+                    </nav>
+                </div>
+
+                <!-- 
+                  FORMULARIO CORREGIDO:
+                  1. 'novalidate' evita que el navegador bloquee el envío
+                     por los campos 'required' ocultos.
+                  2. Hay UN SOLO input 'solver_type' que actualizamos
+                     con JavaScript.
+                -->
+                <form action="{% url 'math_solver:main_solver_view' %}" method="POST" id="solver-form" novalidate>
+                    {% csrf_token %}
+                    
+                    <!-- Este es el único input que le dice a Django qué solver usar -->
+                    <!-- Su valor por defecto se establece desde el contexto de la vista -->
+                    <input type="hidden" 
+                           id="solver-type-input" 
+                           name="solver_type" 
+                           value="{{ context.last_solver|default:'quadratic' }}">
+
+                    <!-- Pestaña 1: Solver Cuadrático -->
+                    <div id="tab-quadratic" class="tab-content">
+                        <h2 class="text-2xl font-semibold mb-4 text-gray-800">Ecuación Cuadrática</h2>
+                        <p class="text-gray-600 mb-6">Resuelve: \( ax^2 + bx + c = 0 \)</p>
+                        <div class="space-y-4">
+                            <!-- CORREGIDO: Nombres únicos -->
+                            <input type="text" name="quad_a_val" placeholder="Coeficiente 'a'" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <input type="text" name="quad_b_val" placeholder="Coeficiente 'b'" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <input type="text" name="quad_c_val" placeholder="Coeficiente 'c'" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-lg mt-6 hover:bg-blue-700 transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                            Resolver Ecuación Cuadrática
+                        </button>
+                    </div>
+
+                    <!-- Pestaña 2: Solver de Bernoulli -->
+                    <div id="tab-bernoulli" class="tab-content">
+                        <h2 class="text-2xl font-semibold mb-4 text-gray-800">Ecuación de Bernoulli</h2>
+                        <p class="text-gray-600 mb-6">Resuelve: \( y' + P(x)y = Q(x)y^n \)</p>
+                        <div class="space-y-4">
+                            <!-- CORREGIDO: Nombres únicos -->
+                            <input type="text" name="bernoulli_p_function" placeholder="Función P(x), ej: -5" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <input type="text" name="bernoulli_q_function" placeholder="Función Q(x), ej: -5/2*x" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <input type="text" name="bernoulli_n_value" placeholder="Exponente 'n', ej: 3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-lg mt-6 hover:bg-blue-700 transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                            Resolver Bernoulli
+                        </button>
+                    </div>
+
+                    <!-- Pestaña 3: Solver de Cauchy-Euler -->
+                    <div id="tab-cauchy" class="tab-content">
+                        <h2 class="text-2xl font-semibold mb-4 text-gray-800">Ecuación de Cauchy-Euler</h2>
+                        <p class="text-gray-600 mb-6">Resuelve: \( ax^2y'' + bxy' + cy = R(x) \)</p>
+                        <div class="space-y-4">
+                            <!-- CORREGIDO: Nombres únicos -->
+                            <input type="text" name="cauchy_a_val" placeholder="Coeficiente 'a'" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <input type="text" name="cauchy_b_val" placeholder="Coeficiente 'b'" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <input type="text" name="cauchy_c_val" placeholder="Coeficiente 'c'" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <input type="text" name="cauchy_r_function" placeholder="Función R(x), ej: 0" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-lg mt-6 hover:bg-blue-700 transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                            Resolver Cauchy-Euler
+                        </button>
+                    </div>
+
+                    <!-- Pestaña 4: Solver de Clairaut -->
+                    <div id="tab-clairaut" class="tab-content">
+                        <h2 class="text-2xl font-semibold mb-4 text-gray-800">Ecuación de Clairaut</h2>
+                        <p class="text-gray-600 mb-6">Resuelve: \( y = xy' + f(y') \)</p>
+                        <p class="text-sm text-gray-500 mb-4 -mt-4">Use 'p' para representar \( y' \). Ej: \( p**2 \)</p>
+                        <div class="space-y-4">
+                            <!-- CORREGIDO: Nombres únicos -->
+                            <input type="text" name="clairaut_f_p_function" placeholder="Función f(p), ej: p**2 + 1" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-lg mt-6 hover:bg-blue-700 transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                            Resolver Clairaut
+                        </button>
+                    </div>
+                    
+                    <!-- Pestaña 5: Solver de Riccati -->
+                    <div id="tab-riccati" class="tab-content">
+                        <h2 class="text-2xl font-semibold mb-4 text-gray-800">Ecuación de Riccati</h2>
+                        <p class="text-gray-600 mb-6">Resuelve: \( y' = P(x)y^2 + Q(x)y + R(x) \)</p>
+                        <div class="space-y-4">
+                            <!-- CORREGIDO: Nombres únicos -->
+                            <input type="text" name="riccati_p_function" placeholder="Función P(x), ej: 1" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <input type="text" name="riccati_q_function" placeholder="Función Q(x), ej: 2/x" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <input type="text" name="riccati_r_function" placeholder="Función R(x), ej: -1/x**2" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-lg mt-6 hover:bg-blue-700 transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                            Resolver Riccati
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
+            <!-- Columna de la Derecha: Resultados -->
+            <div class="bg-white p-6 rounded-2xl shadow-xl">
+                <h2 class="text-2xl font-semibold mb-6 text-gray-800">Resultado</h2>
+                
+                <!-- 
+                  NUEVA FUNCIÓN: 
+                  Se añadió un id="resultado-box" para que JS pueda 
+                  limpiar esta sección.
+                -->
+                <div id="resultado-box" class="bg-gray-50 border border-gray-200 rounded-lg p-6 min-h-[300px] overflow-x-auto">
+                    
+                    <!-- Lógica de renderizado de Django -->
+                    {% if context.solucion %}
+                        <div class="text-green-800 text-lg">
+                            <p class="font-bold text-xl mb-4 text-green-700">Solución Encontrada:</p>
+                            
+                            <!-- 
+                              *** LA CORRECCIÓN ESTÁ AQUÍ ***
+                              Se eliminaron los '\( ... \)' que envolvían la solución.
+                              El filtro 'safe' es necesario para que Django renderice 
+                              el HTML de los solvers Cuadrático y Clairaut.
+                            -->
+                            <div class="text-gray-900 text-base md:text-lg">
+                                {{ context.solucion | safe }}
+                            </div>
+                        </div>
+                    {% elif context.error %}
+                        <div class="p-4 bg-red-100 border border-red-300 rounded-lg text-red-800">
+                            <p class="font-bold text-lg">Error al Resolver:</p>
+                            <p class="mt-2 text-base">{{ context.error }}</p>
+                        </div>
+                    {% else %}
+                        <!-- Este es el placeholder por defecto -->
+                        <div id="resultado-placeholder" class="text-center text-gray-500 pt-16">
+                            <p>Tu solución aparecerá aquí...</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </main>
+    </div>
+    <script>
+        window.djangoContext = {
+            hasSolution: {{ context.solucion|yesno:"true,false" }},
+            hasError: {{ context.error|yesno:"true,false" }}
+        };
+    </script>
+    <script src="{% static 'math_solver/js/main.js' %}"></script>
+</body>
+</html>
