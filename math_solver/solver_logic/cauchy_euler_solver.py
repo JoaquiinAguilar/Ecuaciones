@@ -1,66 +1,60 @@
-from sympy import Eq, dsolve
+from sympy import Eq, dsolve, symbols, latex
 # Importamos nuestros símbolos y funciones comunes
 from .base_solver import x, y, parse_safe, format_latex
 
 def solve_cauchy_euler(a_str: str, b_str: str, c_str: str, R_str: str) -> dict:
     """
-    Resuelve una Ecuación de Cauchy-Euler de segundo orden de la forma:
-    a*x^2 * y'' + b*x * y' + c*y = R(x)
-    
-    Donde y'' = y.diff(x, 2) y y' = y.diff(x)
-    
-    Devuelve un diccionario con la solución formateada en LaTeX
-    o un mensaje de error.
+    Resuelve una Ecuación de Cauchy-Euler y proporciona los pasos.
     """
     
-    # 1. Parsear y Validar las Entradas del Usuario
-    # a, b, y c son generalmente constantes numéricas
+    # 1. Parsear y Validar
     a_expr = parse_safe(a_str)
-    if a_expr is None:
-        return {'error': f"El coeficiente 'a' = '{a_str}' no es válido."}
+    if a_expr is None: return {'error': f"'a' = '{a_str}' no es válido."}
 
     b_expr = parse_safe(b_str)
-    if b_expr is None:
-        return {'error': f"El coeficiente 'b' = '{b_str}' no es válido."}
+    if b_expr is None: return {'error': f"'b' = '{b_str}' no es válido."}
 
     c_expr = parse_safe(c_str)
-    if c_expr is None:
-        return {'error': f"El coeficiente 'c' = '{c_str}' no es válido."}
+    if c_expr is None: return {'error': f"'c' = '{c_str}' no es válido."}
         
-    # R(x) es la función de forzado (puede ser '0')
     R_expr = parse_safe(R_str)
-    if R_expr is None:
-        return {'error': f"La función R(x) = '{R_str}' no es válida."}
+    if R_expr is None: return {'error': f"R(x) = '{R_str}' no es válida."}
 
-    # 2. Construir la Ecuación Diferencial en SymPy
+    # --- Inicio de la Generación de Pasos ---
+    steps = []
     try:
-        # Definimos las derivadas
-        y_pp = y.diff(x, 2)  # Segunda derivada (y'')
-        y_p = y.diff(x)     # Primera derivada (y')
+        # 2. Construir la Ecuación Original
+        ecuacion = Eq((a_expr * (x**2) * y.diff(x, 2)) + (b_expr * x * y.diff(x)) + (c_expr * y), R_expr)
+        steps.append(f"1. La ecuación de Cauchy-Euler es: \( {latex(ecuacion)} \)")
 
-        # Lado izquierdo: a*x^2*y'' + b*x*y' + c*y
-        lado_izquierdo = (a_expr * (x**2) * y_pp) + (b_expr * x * y_p) + (c_expr * y)
+        # 3. Ecuación Característica Auxiliar
+        m = symbols('m')
+        ecuacion_aux = Eq(a_expr * m * (m - 1) + b_expr * m + c_expr, 0)
+        steps.append(f"2. Se forma la ecuación característica auxiliar suponiendo una solución de la forma \(y = x^m\).")
+        steps.append(f"   - La ecuación es: \( {latex(ecuacion_aux)} \)")
+
+        # 4. Resolver la Ecuación Auxiliar
+        raices_aux = dsolve(ecuacion_aux, m)
+        steps.append(f"3. Se resuelven las raíces de la ecuación auxiliar:")
+        steps.append(f"   - Las raíces son: \( m = {latex(raices_aux)} \)")
+
+        # 5. Construir la Solución Homogénea
+        steps.append(f"4. Se construye la solución homogénea (\(y_h\)) basada en las raíces.")
+        # (SymPy dsolve hace esto internamente, aquí solo lo describimos)
         
-        # Lado derecho: R(x)
-        lado_derecho = R_expr
-        
-        # Ecuación completa
-        ecuacion = Eq(lado_izquierdo, lado_derecho)
+        # 6. Encontrar la Solución Particular (si no es homogénea)
+        if R_expr != 0:
+            steps.append(f"5. Como \(R(x) \neq 0\), se busca una solución particular (\(y_p\)) usando métodos como variación de parámetros.")
+            steps.append(f"   - La solución general es \(y = y_h + y_p\).")
+        else:
+            steps.append("5. Como la ecuación es homogénea (\(R(x) = 0\)), la solución general es igual a la solución homogénea (\(y = y_h\)).")
 
-    except Exception as e:
-        return {'error': f"Error al construir la ecuación: {e}"}
-
-    # 3. Resolver la Ecuación Simbólicamente
-    try:
-        # dsolve() de SymPy reconoce esto como una Ecuación de Cauchy-Euler
-        # y aplica el método de la ecuación característica (y = x^m)
-        # o variación de parámetros si R(x) no es cero.
+        # 7. Resolver y Formatear
         solucion = dsolve(ecuacion, y)
-        
-        # 4. Formatear la Salida
         solucion_latex = format_latex(solucion)
-        
-        return {'solucion': solucion_latex}
+        steps.append(f"6. La solución final combinada es: {solucion_latex}")
+
+        return {'solucion': solucion_latex, 'steps': steps}
 
     except Exception as e:
-        return {'error': f"Error al resolver la ecuación: {e}"}
+        return {'error': f"Error durante la resolución: {e}"}

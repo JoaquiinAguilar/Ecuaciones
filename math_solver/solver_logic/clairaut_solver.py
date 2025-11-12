@@ -1,82 +1,69 @@
-from sympy import Eq, dsolve, Symbol, Derivative
+from sympy import Eq, dsolve, Symbol, Derivative, latex, solve
 # Importamos nuestros símbolos y funciones comunes
 from .base_solver import x, y, parse_safe, format_latex
 
 def solve_clairaut(f_p_str: str) -> dict:
     """
-    Resuelve una Ecuación de Clairaut de la forma:
-    y = x*y' + f(y')
-    
-    El usuario proporciona f(y') como una función de 'p', donde 'p'
-    se usa para representar y' (dy/dx).
-    
-    Devuelve un diccionario con las soluciones (general y singular)
-    formateadas en LaTeX o un mensaje de error.
+    Resuelve una Ecuación de Clairaut y proporciona los pasos.
     """
     
-    # 1. Definir un símbolo 'p' para representar y'
-    # Esto hace que sea más fácil para el usuario escribir f(p)
     p = Symbol('p')
-    
-    # 2. Parsear y Validar la Entrada del Usuario (f(p))
+    C = Symbol('C1') # Usar C1 para consistencia con dsolve
+
+    # 1. Parsear y Validar
     try:
         f_p_expr = parse_safe(f_p_str, local_dict={'p': p})
         if f_p_expr is None:
-            return {'error': f"La función f(p) = '{f_p_str}' no es válida."}
+            return {'error': f"f(p) = '{f_p_str}' no es válida."}
     except Exception as e:
         return {'error': f"Error al parsear f(p): {e}"}
 
-    # 3. Construir la Ecuación Diferencial en SymPy
+    # --- Inicio de la Generación de Pasos ---
+    steps = []
     try:
-        # Definimos y' (dy/dx)
+        # 2. Construir la Ecuación Original
         y_p = y.diff(x)
+        ecuacion = Eq(y, x * y_p + f_p_expr.subs(p, y_p))
+        steps.append(f"1. La ecuación de Clairaut es \( y = xy' + f(y') \).")
+        steps.append(f"   - Con \( f(y') \) representada por \( f(p) = {latex(f_p_expr)} \), la ecuación es: \( {latex(ecuacion)} \)")
 
-        # Sustituimos 'p' en f_p_expr por la derivada real (y_p)
-        # Esto nos da f(y')
-        f_y_p_expr = f_p_expr.subs(p, y_p)
-        
-        # Lado izquierdo: y
-        lado_izquierdo = y
-        
-        # Lado derecho: x*y' + f(y')
-        lado_derecho = (x * y_p) + f_y_p_expr
-        
-        # Ecuación completa
-        ecuacion = Eq(lado_izquierdo, lado_derecho)
+        # 3. Solución General
+        steps.append("2. La <strong>solución general</strong> se obtiene reemplazando \( y' \) por una constante arbitraria \( C \).")
+        sol_general = Eq(y, C * x + f_p_expr.subs(p, C))
+        steps.append(f"   - Solución General: \( {latex(sol_general)} \)")
 
-    except Exception as e:
-        return {'error': f"Error al construir la ecuación: {e}"}
+        # 4. Solución Singular
+        steps.append("3. La <strong>solución singular</strong> (o envolvente) se encuentra derivando la solución general con respecto a \( C \) y resolviendo para \( C \).")
+        
+        # Derivar f(p) con respecto a p
+        f_p_deriv = f_p_expr.diff(p)
+        # Ecuación paramétrica para x
+        eq_x = Eq(x, -f_p_deriv)
+        steps.append(f"   - Se establece \( x = -\frac{{df}}{{dp}} \): \( x = {latex(eq_x.rhs)} \)")
+        
+        # Ecuación paramétrica para y
+        eq_y = Eq(y, -p * f_p_deriv + f_p_expr)
+        steps.append(f"   - Y se usa \( y = -p\frac{{df}}{{dp}} + f(p) \): \( y = {latex(eq_y.rhs)} \)")
+        steps.append("   - Estas dos ecuaciones forman una representación paramétrica de la solución singular. A menudo se puede eliminar \(p\) para obtener una solución en términos de \(x\) y \(y\).")
 
-    # 4. Resolver la Ecuación Simbólicamente
-    try:
-        # dsolve() de SymPy reconoce esto como una Ecuación de Clairaut.
-        # A menudo devuelve una LISTA de soluciones:
-        # 1. La solución general (y = C*x + f(C))
-        # 2. La(s) solución(es) singular(es) (la envolvente)
+        # 5. Resolver y Formatear
         soluciones = dsolve(ecuacion, y)
         
-        # 5. Formatear la Salida
         if isinstance(soluciones, list):
-            # Múltiples soluciones (general + singular)
-            soluciones_latex = []
-            for i, sol in enumerate(soluciones):
+            soluciones_html = []
+            for sol in soluciones:
                 tipo = "Solución General" if "C1" in str(sol) else "Solución Singular"
                 sol_latex = format_latex(sol)
-                soluciones_latex.append(f"<p class='font-semibold mt-2'>{tipo}:</p> {sol_latex}")
-            
-            # Unir todas las soluciones en un solo bloque HTML
-            solucion_final_html = "\n".join(soluciones_latex)
-            return {'solucion': solucion_final_html}
-            
-        elif soluciones:
-            # Una sola solución (caso menos común)
-            solucion_latex = format_latex(soluciones)
-            return {'solucion': solucion_latex}
+                soluciones_html.append(f"<p class='font-semibold mt-2'>{tipo}:</p> {sol_latex}")
+            solucion_final_html = "\n".join(soluciones_html)
         else:
-            return {'error': "No se pudo encontrar una solución."}
+            solucion_final_html = format_latex(soluciones)
+
+        steps.append(f"4. SymPy resuelve y encuentra: {solucion_final_html}")
+
+        return {'solucion': solucion_final_html, 'steps': steps}
 
     except Exception as e:
-        # Capturar errores si 'p' no se usó correctamente (ej. 'cos(x)' en lugar de 'cos(p)')
         if "free symbol" in str(e):
-            return {'error': f"Error al resolver: La función f(p) = '{f_p_str}' no debe contener 'x'. Use 'p' en su lugar."}
-        return {'error': f"Error al resolver la ecuación: {e}"}
+            return {'error': f"Error: La función f(p) no debe contener 'x'. Use 'p' en su lugar."}
+        return {'error': f"Error durante la resolución: {e}"}
