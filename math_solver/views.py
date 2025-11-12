@@ -7,6 +7,7 @@ from .solver_logic.bernoulli_solver import solve_bernoulli
 from .solver_logic.cauchy_euler_solver import solve_cauchy_euler
 from .solver_logic.clairaut_solver import solve_clairaut
 from .solver_logic.riccati_solver import solve_riccati
+from .solver_logic.second_order_solver import solve_second_order_homogeneous, solve_second_order_nonhomogeneous
 
 @require_http_methods(["GET", "POST"])
 def main_solver_view(request):
@@ -73,6 +74,23 @@ def main_solver_view(request):
                 R_str = request.POST.get('riccati_r_function', '')
                 # Llamar a la lógica del solver de Riccati
                 context.update(solve_riccati(P_str, Q_str, R_str))
+                
+            elif solver_type == 'second_order_homogeneous':
+                # --- Solver de segundo orden homogéneo ---
+                a_str = request.POST.get('second_a_val', '0')
+                b_str = request.POST.get('second_b_val', '0')
+                c_str = request.POST.get('second_c_val', '0')
+                # Llamar a la lógica del solver de segundo orden homogéneo
+                context.update(solve_second_order_homogeneous(a_str, b_str, c_str))
+                
+            elif solver_type == 'second_order_nonhomogeneous':
+                # --- Solver de segundo orden no homogéneo ---
+                a_str = request.POST.get('second_a_val', '0')
+                b_str = request.POST.get('second_b_val', '0')
+                c_str = request.POST.get('second_c_val', '0')
+                g_str = request.POST.get('second_g_function', '0')
+                # Llamar a la lógica del solver de segundo orden no homogéneo
+                context.update(solve_second_order_nonhomogeneous(a_str, b_str, c_str, g_str))
 
             else:
                 context = {'error': f'Tipo de solver desconocido: "{solver_type}"'}

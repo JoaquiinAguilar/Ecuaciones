@@ -1,4 +1,4 @@
-from sympy import Eq, solve, factor, symbols, discriminant
+from sympy import Eq, solve, factor, symbols, discriminant, latex
 # Importamos 'x' y nuestras funciones comunes
 from .base_solver import x, parse_safe, format_latex
 

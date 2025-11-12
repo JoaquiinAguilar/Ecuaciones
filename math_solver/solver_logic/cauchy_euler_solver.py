@@ -1,4 +1,4 @@
-from sympy import Eq, dsolve, symbols, latex
+from sympy import Eq, dsolve, symbols, latex, solve
 # Importamos nuestros símbolos y funciones comunes
 from .base_solver import x, y, parse_safe, format_latex
 
@@ -25,31 +25,28 @@ def solve_cauchy_euler(a_str: str, b_str: str, c_str: str, R_str: str) -> dict:
     try:
         # 2. Construir la Ecuación Original
         ecuacion = Eq((a_expr * (x**2) * y.diff(x, 2)) + (b_expr * x * y.diff(x)) + (c_expr * y), R_expr)
-        steps.append(f"1. La ecuación de Cauchy-Euler es: \( {latex(ecuacion)} \)")
-
-        # 3. Ecuación Característica Auxiliar
+        steps.append(f"1. La ecuación de Cauchy-Euler es: \\( {latex(ecuacion)} \\)")
+        
+        # 3. Formar la ecuación característica auxiliar
         m = symbols('m')
         ecuacion_aux = Eq(a_expr * m * (m - 1) + b_expr * m + c_expr, 0)
-        steps.append(f"2. Se forma la ecuación característica auxiliar suponiendo una solución de la forma \(y = x^m\).")
-        steps.append(f"   - La ecuación es: \( {latex(ecuacion_aux)} \)")
+        steps.append(f"2. Se forma la ecuación característica auxiliar suponiendo una solución de la forma \\(y = x^m\\).")
+        steps.append(f"   - La ecuación es: \\( {latex(ecuacion_aux)} \\)")
 
         # 4. Resolver la Ecuación Auxiliar
-        raices_aux = dsolve(ecuacion_aux, m)
+        raices_aux = solve(ecuacion_aux, m)
         steps.append(f"3. Se resuelven las raíces de la ecuación auxiliar:")
-        steps.append(f"   - Las raíces son: \( m = {latex(raices_aux)} \)")
-
-        # 5. Construir la Solución Homogénea
-        steps.append(f"4. Se construye la solución homogénea (\(y_h\)) basada en las raíces.")
-        # (SymPy dsolve hace esto internamente, aquí solo lo describimos)
+        steps.append(f"   - Las raíces son: \\( m = {latex(raices_aux)} \\)")
+        steps.append(f"4. Se construye la solución homogénea (\\(y_h\\)) basada en las raíces.")
         
-        # 6. Encontrar la Solución Particular (si no es homogénea)
-        if R_expr != 0:
-            steps.append(f"5. Como \(R(x) \neq 0\), se busca una solución particular (\(y_p\)) usando métodos como variación de parámetros.")
-            steps.append(f"   - La solución general es \(y = y_h + y_p\).")
+        # 5. Determinar si es homogénea o no homogénea
+        if R_expr == 0:
+            steps.append("5. Como la ecuación es homogénea (\\(R(x) = 0\\)), la solución general es igual a la solución homogénea (\\(y = y_h\\)).")
         else:
-            steps.append("5. Como la ecuación es homogénea (\(R(x) = 0\)), la solución general es igual a la solución homogénea (\(y = y_h\)).")
+            steps.append(f"5. Como \\(R(x) \\neq 0\\), se busca una solución particular (\\(y_p\\)) usando métodos como variación de parámetros.")
+            steps.append(f"   - La solución general es \\(y = y_h + y_p\\).")
 
-        # 7. Resolver y Formatear
+        # 6. Resolver y Formatear
         solucion = dsolve(ecuacion, y)
         solucion_latex = format_latex(solucion)
         steps.append(f"6. La solución final combinada es: {solucion_latex}")
