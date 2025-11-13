@@ -4,6 +4,8 @@
 
 Un proyecto web completo para resolver diferentes tipos de ecuaciones matemáticas con interfaz moderna y persistencia de datos.
 
+**📁 Repositorio del Proyecto:** [https://github.com/JoaquiinAguilar/Ecuaciones.git](https://github.com/JoaquiinAguilar/Ecuaciones.git)
+
 ## 🚀 Características Principales
 
 ### 📊 Tipos de Ecuaciones Soportadas
@@ -34,15 +36,15 @@ Un proyecto web completo para resolver diferentes tipos de ecuaciones matemátic
 ## 🛠️ Tecnologías Utilizadas
 
 ### Backend
-- **Django 4.x**: Framework web principal
-- **SymPy**: Computación simbólica y matemática
-- **Python 3.x**: Lenguaje de programación
+- **Django 4.2+**: Framework web principal
+- **SymPy 1.12+**: Computación simbólica y matemática
+- **Python 3.8+**: Lenguaje de programación
 
 ### Frontend
-- **Tailwind CSS**: Framework CSS moderno
+- **Tailwind CSS 3.x**: Framework CSS moderno
 - **JavaScript ES6+**: Lógica interactiva del cliente
-- **MathJax 3**: Renderizado de expresiones matemáticas
-- **LocalStorage**: Persistencia de datos en el navegador
+- **MathJax 3.2+**: Renderizado de expresiones matemáticas
+- **LocalStorage API**: Persistencia de datos en el navegador
 
 ### Arquitectura
 - **MVC Pattern**: Separación clara de responsabilidades
@@ -88,7 +90,7 @@ math_project/
 
 1. **Clonar el repositorio**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/JoaquiinAguilar/Ecuaciones.git
    cd math_project
    ```
 
@@ -200,10 +202,40 @@ Para agregar nuevos tipos de ecuaciones:
 
 Este proyecto está desarrollado para fines educativos y de investigación en el área de matemáticas computacionales.
 
-## 👥 Autores
+## 🤝 Contribución
 
-- **Desarrollador Principal**: [Tu Nombre]
-- **Institución**: Ingeniería en Sistemas Computacionales 9no semestre
+Este es un proyecto colaborativo desarrollado como parte del coursework de Ingeniería en Sistemas Computacionales. Las contribuciones están abiertas para:
+
+- 🐛 **Reporte de bugs** y problemas
+- 💡 **Mejoras** en la funcionalidad
+- 📚 **Documentación** y ejemplos
+- 🎨 **Mejoras** en la interfaz de usuario
+
+### Flujo de Trabajo
+1. Fork del repositorio
+2. Crear rama de feature (`git checkout -b feature/amazing-feature`)
+3. Commit de cambios (`git commit -m 'Add amazing feature'`)
+4. Push a la rama (`git push origin feature/amazing-feature`)
+5. Abrir Pull Request
+
+## 👥 Autores y Roles
+
+### 🎓 Equipo de Desarrollo
+- **Joaquín Aguilar Hernández** - *Desarrollador Principal*  
+  📧 Arquitectura del sistema, implementación de solvers matemáticos, integración frontend-backend
+
+- **Alan Oswaldo Toledo del Toro** - *Especialista en UI/UX*  
+  🎨 Diseño de interfaz, experiencia de usuario, optimización visual
+
+- **Dennis Adolfo Jiménez Pérez** - *Ingeniero de Testing*  
+  🧪 Validación de ecuaciones, control de calidad, documentación técnica
+
+- **Pedro Edson Anza Avendaño** - *Arquitecto de Software*  
+  🏗️ Diseño de arquitectura, patrones de diseño, optimización de rendimiento
+
+### 🏫 Institución
+**Ingeniería en Sistemas Computacionales - 9no Semestre**  
+Universidad Tecnológica - Proyecto Final de Ecuaciones Diferenciales
 
 ## 🙏 Agradecimientos
 
