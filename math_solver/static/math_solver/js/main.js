@@ -1,4 +1,4 @@
-// Enhanced JavaScript for Math Solver Pro
+// Enhanced JavaScript for Math Solver Pro with Persistent State
 class MathSolverApp {
     constructor() {
         this.init();
@@ -6,10 +6,21 @@ class MathSolverApp {
 
     init() {
         this.cacheElements();
+        this.initializeState();
         this.bindEvents();
         this.loadInitialSolver();
         this.setupFunctionPalette();
         this.initializeMathJax();
+    }
+
+    initializeState() {
+        // Initialize state management
+        this.solverStates = {}; // Store form data for each solver type
+        this.solutionHistory = {}; // Store solutions for each solver type
+        this.currentSolver = 'quadratic';
+        
+        // Load saved state from localStorage
+        this.loadStateFromStorage();
     }
 
     cacheElements() {
@@ -19,23 +30,6 @@ class MathSolverApp {
         this.solverForm = document.getElementById('solver-form');
         this.functionBtns = document.querySelectorAll('.function-btn');
         this.solverNavBtns = document.querySelectorAll('.solver-nav-btn');
-        
-        // Debug: Check if elements exist
-        console.log('Elements found:', {
-            solverContent: !!this.solverContent,
-            solverTypeInput: !!this.solverTypeInput,
-            resultadoBox: !!this.resultadoBox,
-            solverForm: !!this.solverForm,
-            functionBtns: this.functionBtns.length,
-            solverNavBtns: this.solverNavBtns.length
-        });
-        
-        // Check if templates exist
-        const templateIds = ['template-quadratic', 'template-bernoulli', 'template-cauchy', 'template-clairaut', 'template-riccati', 'template-second_order_homogeneous', 'template-second_order_nonhomogeneous'];
-        templateIds.forEach(id => {
-            const template = document.getElementById(id);
-            console.log(`Template ${id}:`, !!template);
-        });
         
         // Store placeholder HTML
         this.resultadoPlaceholderHTML = document.getElementById('resultado-placeholder')?.outerHTML || 
@@ -53,8 +47,11 @@ class MathSolverApp {
         });
 
         // Form submission
-        this.solverForm.addEventListener('submit', () => {
+        this.solverForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.saveCurrentState();
             this.showLoadingState();
+            this.submitForm();
         });
 
         // Function palette buttons
@@ -65,28 +62,122 @@ class MathSolverApp {
             });
         });
 
+        // Input change tracking - save state automatically
+        document.addEventListener('input', (e) => {
+            if (e.target.matches('input[type="text"]')) {
+                this.saveCurrentStateDebounced();
+            }
+        });
+
         // Input focus tracking for function palette
         document.addEventListener('focusin', (e) => {
             if (e.target.matches('input[type="text"]')) {
                 this.currentInput = e.target;
             }
         });
+
+        // Save state before page unload
+        window.addEventListener('beforeunload', () => {
+            this.saveStateToStorage();
+        });
+
+        // Keyboard shortcuts for function palette
+        document.addEventListener('keydown', (e) => {
+            // Ctrl/Cmd + Space to show function palette hint
+            if ((e.ctrlKey || e.metaKey) && e.code === 'Space') {
+                e.preventDefault();
+                this.showFunctionPaletteHint();
+            }
+            
+            // Escape to hide function palette hint
+            if (e.code === 'Escape') {
+                this.hideFunctionPaletteHint();
+            }
+        });
+    }
+
+    loadStateFromStorage() {
+        try {
+            const savedState = localStorage.getItem('mathSolverState');
+            if (savedState) {
+                const state = JSON.parse(savedState);
+                this.solverStates = state.solverStates || {};
+                this.solutionHistory = state.solutionHistory || {};
+                this.currentSolver = state.currentSolver || 'quadratic';
+            }
+        } catch (e) {
+            console.warn('Could not load state from storage:', e);
+        }
+    }
+
+    saveStateToStorage() {
+        try {
+            const state = {
+                solverStates: this.solverStates,
+                solutionHistory: this.solutionHistory,
+                currentSolver: this.currentSolver
+            };
+            localStorage.setItem('mathSolverState', JSON.stringify(state));
+        } catch (e) {
+            console.warn('Could not save state to storage:', e);
+        }
+    }
+
+    saveCurrentStateDebounced() {
+        clearTimeout(this.saveTimeout);
+        this.saveTimeout = setTimeout(() => {
+            this.saveCurrentState();
+        }, 300);
+    }
+
+    saveCurrentState() {
+        const formData = new FormData(this.solverForm);
+        const state = {};
+        
+        // Save all form inputs except hidden solver type
+        for (let [key, value] of formData.entries()) {
+            if (key !== 'solver_type' && key !== 'csrfmiddlewaretoken') {
+                state[key] = value;
+            }
+        }
+        
+        this.solverStates[this.currentSolver] = state;
+        this.saveStateToStorage();
+    }
+
+    loadSolverState(solverType) {
+        const savedState = this.solverStates[solverType];
+        if (savedState) {
+            // Restore form values after a short delay to ensure DOM is ready
+            setTimeout(() => {
+                Object.entries(savedState).forEach(([key, value]) => {
+                    const input = document.querySelector(`input[name="${key}"]`);
+                    if (input) {
+                        input.value = value;
+                    }
+                });
+            }, 100);
+        }
+    }
+
+    loadSolverSolution(solverType) {
+        const savedSolution = this.solutionHistory[solverType];
+        if (savedSolution) {
+            this.resultadoBox.innerHTML = savedSolution;
+            this.rerenderMathJax();
+        }
     }
 
     loadInitialSolver() {
-        const initialSolver = window.djangoContext?.lastSolver || 'quadratic';
-        console.log('Loading initial solver:', initialSolver);
-        
-        // Wait a bit for DOM to be ready
-        setTimeout(() => {
-            this.switchSolver(initialSolver, false); // Don't clear results on initial load
-        }, 100);
+        this.switchSolver(this.currentSolver, false); // Don't clear results on initial load
     }
 
     switchSolver(solverType, clearResults = true) {
-        console.log('Switching to solver:', solverType);
+        // Save current state before switching
+        this.saveCurrentState();
         
-        // Update hidden input
+        // Update current solver
+        this.currentSolver = solverType;
         this.solverTypeInput.value = solverType;
 
         // Update navigation UI
@@ -95,9 +186,14 @@ class MathSolverApp {
         // Load solver template
         this.loadSolverTemplate(solverType);
 
-        // Clear results if requested
+        // Restore saved form data
+        this.loadSolverState(solverType);
+
+        // Load saved solution if exists
         if (clearResults) {
             this.clearResults();
+        } else {
+            this.loadSolverSolution(solverType);
         }
 
         // Focus first input
@@ -106,10 +202,13 @@ class MathSolverApp {
             if (firstInput) {
                 firstInput.focus();
             }
-        }, 100);
+        }, 150);
 
         // Force MathJax to re-render after template loads
         this.rerenderMathJax();
+        
+        // Save state to storage
+        this.saveStateToStorage();
     }
 
     updateNavigationUI(solverType) {
@@ -131,7 +230,6 @@ class MathSolverApp {
 
     loadSolverTemplate(solverType) {
         const template = document.getElementById(`template-${solverType}`);
-        console.log('Loading template:', `template-${solverType}`, 'Found:', !!template);
         
         if (template) {
             // Clone template content
@@ -149,7 +247,6 @@ class MathSolverApp {
                 this.rerenderMathJax();
             }, 50);
         } else {
-            console.log(`Using fallback template for: ${solverType}`);
             // Use JavaScript fallback template
             this.solverContent.innerHTML = solverTemplates[solverType] || `
                 <div class="p-4 bg-red-100 border border-red-300 rounded-lg text-red-800">
@@ -225,10 +322,13 @@ class MathSolverApp {
             this.currentInput.focus();
 
             // Add visual feedback
-            this.currentInput.classList.add('ring-2', 'ring-blue-400');
+            this.currentInput.classList.add('ring-2', 'ring-blue-400', 'function-insert-animation');
             setTimeout(() => {
-                this.currentInput.classList.remove('ring-2', 'ring-blue-400');
+                this.currentInput.classList.remove('ring-2', 'ring-blue-400', 'function-insert-animation');
             }, 500);
+            
+            // Save state after insertion
+            this.saveCurrentStateDebounced();
         }
     }
 
@@ -242,6 +342,78 @@ class MathSolverApp {
         }
     }
 
+    showLoadingState() {
+        const loadingHTML = `
+            <div class="text-center py-8">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <p class="mt-4 text-gray-600">Resolviendo ecuación...</p>
+            </div>
+        `;
+        this.resultadoBox.innerHTML = loadingHTML;
+    }
+
+    submitForm() {
+        const formData = new FormData(this.solverForm);
+        
+        // Submit via fetch to avoid page reload
+        fetch(this.solverForm.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.data) {
+                // Update result box with solution data
+                this.updateResultBox(data.data);
+                
+                // Save solution to history
+                this.solutionHistory[this.currentSolver] = this.resultadoBox.innerHTML;
+                this.saveStateToStorage();
+                
+                // Re-render MathJax for new content
+                this.rerenderMathJax();
+            } else {
+                // Handle error case
+                this.showError(data.data?.error || 'Unknown error occurred');
+            }
+        })
+        .catch(error => {
+            console.error('Error submitting form:', error);
+            this.showError(`Error al enviar formulario: ${error.message}`);
+        });
+    }
+
+    updateResultBox(data) {
+        if (data.error) {
+            this.showError(data.error);
+        } else if (data.solucion) {
+            // Render solution with proper formatting
+            this.resultadoBox.innerHTML = `
+                <div class="p-6 bg-green-50 border border-green-200 rounded-lg">
+                    <h3 class="text-lg font-bold text-green-800 mb-4">✅ Solución Encontrada</h3>
+                    <div class="text-gray-800">
+                        ${data.solucion}
+                    </div>
+                </div>
+            `;
+        } else {
+            this.showError('No se recibió una solución válida');
+        }
+    }
+
+    showError(message) {
+        this.resultadoBox.innerHTML = `
+            <div class="p-4 bg-red-100 border border-red-300 rounded-lg text-red-800">
+                <p class="font-bold">❌ Error:</p>
+                <p>${message}</p>
+            </div>
+        `;
+    }
+
     // Force MathJax to re-render all content
     rerenderMathJax() {
         if (window.MathJax) {
@@ -251,14 +423,45 @@ class MathSolverApp {
         }
     }
 
-    showLoadingState() {
-        const loadingHTML = `
-            <div class="text-center py-8">
-                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                <p class="mt-4 text-gray-600">Resolviendo ecuación...</p>
+    showFunctionPaletteHint() {
+        // Create or update hint overlay
+        let hintOverlay = document.getElementById('function-hint-overlay');
+        if (!hintOverlay) {
+            hintOverlay = document.createElement('div');
+            hintOverlay.id = 'function-hint-overlay';
+            hintOverlay.className = 'fixed top-4 right-4 bg-white border border-gray-300 rounded-lg shadow-lg p-4 z-50 max-w-sm';
+            document.body.appendChild(hintOverlay);
+        }
+        
+        hintOverlay.innerHTML = `
+            <div class="flex justify-between items-center mb-3">
+                <h4 class="font-semibold text-gray-800">Atajos de Teclado</h4>
+                <button onclick="this.parentElement.parentElement.remove()" class="text-gray-500 hover:text-gray-700">✕</button>
+            </div>
+            <div class="text-sm text-gray-600 space-y-1">
+                <p><kbd class="px-2 py-1 bg-gray-100 rounded">Ctrl+Space</kbd> - Mostrar/Ocultar esta ayuda</p>
+                <p><kbd class="px-2 py-1 bg-gray-100 rounded">Tab</kbd> - Navegar entre campos</p>
+                <p><kbd class="px-2 py-1 bg-gray-100 rounded">Enter</kbd> - Resolver ecuación</p>
+                <p><kbd class="px-2 py-1 bg-gray-100 rounded">Escape</kbd> - Cerrar ayuda</p>
+            </div>
+            <div class="mt-3 pt-3 border-t border-gray-200">
+                <p class="text-xs text-gray-500">Haz clic en cualquier función de la paleta para insertarla en el campo activo</p>
             </div>
         `;
-        this.resultadoBox.innerHTML = loadingHTML;
+        
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            if (document.getElementById('function-hint-overlay')) {
+                hintOverlay.remove();
+            }
+        }, 5000);
+    }
+
+    hideFunctionPaletteHint() {
+        const hintOverlay = document.getElementById('function-hint-overlay');
+        if (hintOverlay) {
+            hintOverlay.remove();
+        }
     }
 
     // Public method to handle server responses
@@ -446,5 +649,12 @@ window.MathSolverUtils = {
                 toast.remove();
             }, 2000);
         });
+    },
+    
+    clearAllData: () => {
+        if (confirm('¿Estás seguro de que quieres borrar todos los datos guardados?')) {
+            localStorage.removeItem('mathSolverState');
+            location.reload();
+        }
     }
 };

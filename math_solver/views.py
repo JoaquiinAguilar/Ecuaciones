@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
+from django.http import JsonResponse
+import json
 
 # --- 1. Importar TODOS los solvers de nuestra lógica ---
 from .solver_logic.quadratic_solver import solve_quadratic
@@ -12,11 +14,12 @@ from .solver_logic.second_order_solver import solve_second_order_homogeneous, so
 @require_http_methods(["GET", "POST"])
 def main_solver_view(request):
     """
-    Controla la página principal, maneja las solicitudes GET (mostrar página)
-    y POST (procesar formulario).
+    Controla la página principal, maneja las solicitudes GET (mostrar página),
+    POST (procesar formulario) y AJAX (actualización sin recarga).
     
     Esta vista ahora maneja los 5 tipos de solvers usando
-    nombres de input únicos para evitar conflictos.
+    nombres de input únicos para evitar conflictos y soporta
+    respuestas JSON para solicitudes AJAX.
     """
     
     # Contexto inicial
@@ -99,7 +102,23 @@ def main_solver_view(request):
             # Captura de error general
             context = {'error': f'Ha ocurrido un error inesperado en la vista: {e}'}
 
-    # 3. Renderizar la página
-    # Si es GET, context es {'last_solver': 'quadratic'}.
-    # Si es POST, context contiene la 'solucion' o 'error' Y 'last_solver'.
-    return render(request, 'math_solver/index.html', {'context': context})
+    # 3. Manejar respuesta AJAX vs respuesta normal
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        # Es una solicitud AJAX - devolver JSON
+        return JsonResponse({
+            'success': 'error' not in context,
+            'data': context
+        })
+    else:
+        # Es una solicitud normal - renderizar la página
+        # Si es GET, context es {'last_solver': 'quadratic'}.
+        # Si es POST, context contiene la 'solucion' o 'error' Y 'last_solver'.
+        return render(request, 'math_solver/index.html', {'context': context})
+
+
+def help_view(request):
+    """
+    Vista para la página de ayuda con instrucciones detalladas
+    sobre cómo usar el Math Solver Pro.
+    """
+    return render(request, 'math_solver/help.html')

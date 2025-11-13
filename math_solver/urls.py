@@ -13,4 +13,8 @@ urlpatterns = [
     # El 'name' nos permite referirnos a esta ruta fácilmente en los templates
     # (como hicimos en index.html con {% url 'main_solver_view' %}).
     path('', views.main_solver_view, name='main_solver_view'),
+    
+    # URL: /solver/help/
+    # Página de ayuda con instrucciones detalladas
+    path('help/', views.help_view, name='help_view'),
 ]
