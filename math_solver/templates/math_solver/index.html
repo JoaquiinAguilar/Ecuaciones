@@ -39,19 +39,98 @@
         <!-- Function Palette -->
         <div class="bg-white p-4 rounded-2xl shadow-xl mb-6">
             <h3 class="text-lg font-semibold mb-3 text-gray-800">Paleta de Funciones Matemáticas</h3>
-            <div class="flex flex-wrap gap-2">
-                <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm" data-func="sin(x)">sin(x)</button>
-                <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm" data-func="cos(x)">cos(x)</button>
-                <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm" data-func="tan(x)">tan(x)</button>
-                <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm" data-func="asin(x)">asin(x)</button>
-                <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm" data-func="acos(x)">acos(x)</button>
-                <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm" data-func="atan(x)">atan(x)</button>
-                <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm" data-func="exp(x)">exp(x)</button>
-                <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm" data-func="log(x)">log(x)</button>
-                <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm" data-func="ln(x)">ln(x)</button>
-                <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm" data-func="sqrt(x)">sqrt(x)</button>
-                <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm" data-func="x**2">x²</button>
-                <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm" data-func="x**3">x³</button>
+            
+            <!-- Trigonométricas -->
+            <div class="mb-3">
+                <h4 class="text-sm font-medium text-gray-600 mb-2">Trigonométricas</h4>
+                <div class="flex flex-wrap gap-2">
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="sin(x)" title="Seno">sin(x)</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="cos(x)" title="Coseno">cos(x)</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="tan(x)" title="Tangente">tan(x)</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="cot(x)" title="Cotangente">cot(x)</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="sec(x)" title="Secante">sec(x)</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="csc(x)" title="Cosecante">csc(x)</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="asin(x)" title="Arco seno">asin(x)</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="acos(x)" title="Arco coseno">acos(x)</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="atan(x)" title="Arco tangente">atan(x)</button>
+                </div>
+            </div>
+            
+            <!-- Exponenciales y Logarítmicas -->
+            <div class="mb-3">
+                <h4 class="text-sm font-medium text-gray-600 mb-2">Exponenciales y Logarítmicas</h4>
+                <div class="flex flex-wrap gap-2">
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="exp(x)" title="Exponencial e^x">exp(x)</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="log(x)" title="Logaritmo natural">log(x)</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="ln(x)" title="Logaritmo natural">ln(x)</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="log(x,10)" title="Logaritmo base 10">log₁₀(x)</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="x**n" title="Potencia">xⁿ</button>
+                </div>
+            </div>
+            
+            <!-- Potencias y Raíces -->
+            <div class="mb-3">
+                <h4 class="text-sm font-medium text-gray-600 mb-2">Potencias y Raíces</h4>
+                <div class="flex flex-wrap gap-2">
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="sqrt(x)" title="Raíz cuadrada">√x</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="x**2" title="Cuadrado">x²</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="x**3" title="Cubo">x³</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="x**(1/2)" title="Raíz 1/2">x¹/²</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="abs(x)" title="Valor absoluto">|x|</button>
+                </div>
+            </div>
+            
+            <!-- Funciones Especiales (Ecuaciones Diferenciales) -->
+            <div class="mb-3">
+                <h4 class="text-sm font-medium text-gray-600 mb-2">Funciones Especiales</h4>
+                <div class="flex flex-wrap gap-2">
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="sinh(x)" title="Seno hiperbólico">sinh(x)</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="cosh(x)" title="Coseno hiperbólico">cosh(x)</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="tanh(x)" title="Tangente hiperbólica">tanh(x)</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="airyai(x)" title="Función Airy Ai">Ai(x)</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="airybi(x)" title="Función Airy Bi">Bi(x)</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="besselj(0,x)" title="Función Bessel J₀">J₀(x)</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="bessely(0,x)" title="Función Bessel Y₀">Y₀(x)</button>
+                </div>
+            </div>
+            
+            <!-- Operadores y Constantes -->
+            <div class="mb-3">
+                <h4 class="text-sm font-medium text-gray-600 mb-2">Operadores y Constantes</h4>
+                <div class="flex flex-wrap gap-2">
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="pi" title="Número Pi">π</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="E" title="Número de Euler">e</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="I" title="Unidad imaginaria">i</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="oo" title="Infinito">∞</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="1/x" title="Recíproco">1/x</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="-x" title="Negativo">-x</button>
+                </div>
+            </div>
+            
+            <!-- Polinomios y Series -->
+            <div>
+                <h4 class="text-sm font-medium text-gray-600 mb-2">Polinomios</h4>
+                <div class="flex flex-wrap gap-2">
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="x**4" title="Cuarta potencia">x⁴</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="x**5" title="Quinta potencia">x⁵</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="(x+1)**2" title="Cuadrado de (x+1)">(x+1)²</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="(x-1)**2" title="Cuadrado de (x-1)">(x-1)²</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="x**2+1" title="Cuadrado más 1">x²+1</button>
+                    <button class="function-btn px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm relative group" data-func="x**2-1" title="Cuadrado menos 1">x²-1</button>
+                </div>
+            </div>
+            
+            <!-- Ayuda -->
+            <div class="mt-4 pt-4 border-t border-gray-200">
+                <div class="flex items-center justify-between">
+                    <p class="text-xs text-gray-500">
+                        <kbd class="px-2 py-1 bg-gray-100 rounded text-xs">Ctrl+Space</kbd> para atajos
+                    </p>
+                    <a href="{% url 'math_solver:help_view' %}" class="text-xs text-blue-600 hover:text-blue-800 flex items-center space-x-1">
+                        <span>📚</span>
+                        <span>Guía Completa</span>
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -183,6 +262,16 @@
             </div>
 
         </main>
+    </div>
+
+    <!-- Floating Help Button -->
+    <div class="fixed bottom-6 right-6 z-50">
+        <a href="{% url 'math_solver:help_view' %}" class="bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition-all hover:scale-110 group">
+            <span class="text-xl">📚</span>
+            <span class="absolute right-full mr-3 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-3 py-1 rounded text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                Guía de Ayuda
+            </span>
+        </a>
     </div>
 
     <!-- Hidden templates for different solvers -->
