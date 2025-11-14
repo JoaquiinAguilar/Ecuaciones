@@ -1,17 +1,32 @@
 <!-- Hidden templates for different solver forms -->
 <template id="template-quadratic">
-    <div class="space-y-4">
-        <h3 class="text-lg font-semibold text-gray-800">Ecuación Cuadrática</h3>
-        <p class="text-gray-700 mb-4">Resuelve: \( ax^2 + bx + c = 0 \)</p>
         <div class="space-y-4">
-            <input type="text" name="quad_a_val" placeholder="Coeficiente 'a'" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-            <input type="text" name="quad_b_val" placeholder="Coeficiente 'b'" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-            <input type="text" name="quad_c_val" placeholder="Coeficiente 'c'" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            <h3 class="text-lg font-semibold text-gray-800">Ecuación Cuadrática</h3>
+            <p class="text-gray-700 mb-4">Resuelve: \( ax^2 + bx + c = 0 \)</p>
+            <div class="space-y-4">
+                <input type="text" name="quad_a_val" placeholder="Coeficiente 'a'" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                <input type="text" name="quad_b_val" placeholder="Coeficiente 'b'" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                <input type="text" name="quad_c_val" placeholder="Coeficiente 'c'" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+            
+            <!-- Condiciones Iniciales -->
+            <div class="space-y-4 border-t border-gray-200 pt-4">
+                <h4 class="font-medium text-gray-800">Condición Inicial (Opcional):</h4>
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-3">
+                    <p class="text-sm text-yellow-800">
+                        <strong>Nota:</strong> Si proporcionas una condición inicial, se verificará qué raíz la satisface.
+                    </p>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="text" name="quad_x0" placeholder="x₀, ej: 2" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input type="text" name="quad_y0" placeholder="y(x₀), ej: 0" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+            
+            <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-lg mt-6 hover:bg-blue-700 transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                Resolver Ecuación Cuadrática
+            </button>
         </div>
-        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-lg mt-6 hover:bg-blue-700 transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-            Resolver Ecuación Cuadrática
-        </button>
-    </div>
 </template>
 
 <template id="template-bernoulli">
@@ -25,11 +40,29 @@
                 • n=1: Se convierte en ecuación separable
             </p>
         </div>
+        
+        <!-- Parámetros de la Ecuación -->
         <div class="space-y-4">
+            <h4 class="font-medium text-gray-800">Parámetros de la Ecuación:</h4>
             <input type="text" name="bernoulli_p_function" placeholder="Función P(x), ej: -5" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
             <input type="text" name="bernoulli_q_function" placeholder="Función Q(x), ej: -5/2*x" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
             <input type="text" name="bernoulli_n_value" placeholder="Exponente 'n', ej: 3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
         </div>
+        
+        <!-- Condiciones Iniciales -->
+        <div class="space-y-4 border-t border-gray-200 pt-4">
+            <h4 class="font-medium text-gray-800">Condiciones Iniciales (Opcional):</h4>
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-3">
+                <p class="text-sm text-yellow-800">
+                    <strong>Nota:</strong> Si proporcionas condiciones iniciales, se encontrará la solución particular.
+                </p>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <input type="text" name="bernoulli_x0" placeholder="x₀, ej: 0" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="text" name="bernoulli_y0" placeholder="y(x₀), ej: 1" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+        </div>
+        
         <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-lg mt-6 hover:bg-blue-700 transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
             Resolver Bernoulli
         </button>
@@ -40,12 +73,34 @@
     <div class="space-y-4">
         <h3 class="text-lg font-semibold text-gray-800">Ecuación de Cauchy-Euler</h3>
         <p class="text-gray-700 mb-4">Resuelve: \( ax^2y'' + bxy' + cy = R(x) \)</p>
+        
+        <!-- Parámetros de la Ecuación -->
         <div class="space-y-4">
+            <h4 class="font-medium text-gray-800">Parámetros de la Ecuación:</h4>
             <input type="text" name="cauchy_a_val" placeholder="Coeficiente 'a'" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
             <input type="text" name="cauchy_b_val" placeholder="Coeficiente 'b'" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
             <input type="text" name="cauchy_c_val" placeholder="Coeficiente 'c'" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
             <input type="text" name="cauchy_r_function" placeholder="Función R(x), ej: 0" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
         </div>
+        
+        <!-- Condiciones Iniciales -->
+        <div class="space-y-4 border-t border-gray-200 pt-4">
+            <h4 class="font-medium text-gray-800">Condiciones Iniciales (Opcional):</h4>
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-3">
+                <p class="text-sm text-yellow-800">
+                    <strong>Nota:</strong> Para ecuaciones de segundo orden, puedes proporcionar y(x₀) y y'(x₀).
+                </p>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <input type="text" name="cauchy_x0" placeholder="x₀, ej: 1" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="text" name="cauchy_y0" placeholder="y(x₀), ej: 2" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <input type="text" name="cauchy_yp0" placeholder="y'(x₀), ej: 3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <div class="text-sm text-gray-600 flex items-center">Primera derivada en x₀</div>
+            </div>
+        </div>
+        
         <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-lg mt-6 hover:bg-blue-700 transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
             Resolver Cauchy-Euler
         </button>
@@ -57,9 +112,27 @@
         <h3 class="text-lg font-semibold text-gray-800">Ecuación de Clairaut</h3>
         <p class="text-gray-700 mb-4">Resuelve: \( y = xy' + f(y') \)</p>
         <p class="text-sm text-gray-600 mb-4">Use 'p' para representar \( y' \). Ej: \( p**2 \)</p>
+        
+        <!-- Parámetros de la Ecuación -->
         <div class="space-y-4">
+            <h4 class="font-medium text-gray-800">Parámetros de la Ecuación:</h4>
             <input type="text" name="clairaut_f_p_function" placeholder="Función f(p), ej: p**2 + 1" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
         </div>
+        
+        <!-- Condiciones Iniciales -->
+        <div class="space-y-4 border-t border-gray-200 pt-4">
+            <h4 class="font-medium text-gray-800">Condiciones Iniciales (Opcional):</h4>
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-3">
+                <p class="text-sm text-yellow-800">
+                    <strong>Nota:</strong> Si proporcionas condiciones iniciales, se encontrará la solución particular.
+                </p>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <input type="text" name="clairaut_x0" placeholder="x₀, ej: 0" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="text" name="clairaut_y0" placeholder="y(x₀), ej: 1" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+        </div>
+        
         <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-lg mt-6 hover:bg-blue-700 transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
             Resolver Clairaut
         </button>
@@ -70,11 +143,29 @@
     <div class="space-y-4">
         <h3 class="text-lg font-semibold text-gray-800">Ecuación de Riccati</h3>
         <p class="text-gray-700 mb-4">Resuelve: \( y' = P(x)y^2 + Q(x)y + R(x) \)</p>
+        
+        <!-- Parámetros de la Ecuación -->
         <div class="space-y-4">
+            <h4 class="font-medium text-gray-800">Parámetros de la Ecuación:</h4>
             <input type="text" name="riccati_p_function" placeholder="Función P(x), ej: 1" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
             <input type="text" name="riccati_q_function" placeholder="Función Q(x), ej: 2/x" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
             <input type="text" name="riccati_r_function" placeholder="Función R(x), ej: -1/x**2" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
         </div>
+        
+        <!-- Condiciones Iniciales -->
+        <div class="space-y-4 border-t border-gray-200 pt-4">
+            <h4 class="font-medium text-gray-800">Condiciones Iniciales (Opcional):</h4>
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-3">
+                <p class="text-sm text-yellow-800">
+                    <strong>Nota:</strong> Si proporcionas condiciones iniciales, se encontrará la solución particular.
+                </p>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <input type="text" name="riccati_x0" placeholder="x₀, ej: 0" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="text" name="riccati_y0" placeholder="y(x₀), ej: 1" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+        </div>
+        
         <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-lg mt-6 hover:bg-blue-700 transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
             Resolver Riccati
         </button>
@@ -93,11 +184,33 @@
                 • Raíces complejas: \( y = e^{\alpha x}(C_1\cos(\beta x) + C_2\sin(\beta x)) \)
             </p>
         </div>
+        
+        <!-- Parámetros de la Ecuación -->
         <div class="space-y-4">
+            <h4 class="font-medium text-gray-800">Parámetros de la Ecuación:</h4>
             <input type="text" name="second_a_val" placeholder="Coeficiente 'a'" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" required>
             <input type="text" name="second_b_val" placeholder="Coeficiente 'b'" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" required>
             <input type="text" name="second_c_val" placeholder="Coeficiente 'c'" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" required>
         </div>
+        
+        <!-- Condiciones Iniciales -->
+        <div class="space-y-4 border-t border-gray-200 pt-4">
+            <h4 class="font-medium text-gray-800">Condiciones Iniciales (Opcional):</h4>
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-3">
+                <p class="text-sm text-yellow-800">
+                    <strong>Nota:</strong> Para ecuaciones de segundo orden, puedes proporcionar y(x₀) y y'(x₀).
+                </p>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <input type="text" name="second_x0" placeholder="x₀, ej: 0" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                <input type="text" name="second_y0" placeholder="y(x₀), ej: 1" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <input type="text" name="second_yp0" placeholder="y'(x₀), ej: 2" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                <div class="text-sm text-gray-600 flex items-center">Primera derivada en x₀</div>
+            </div>
+        </div>
+        
         <button type="submit" class="w-full bg-green-600 text-white font-bold py-3 px-6 rounded-lg mt-6 hover:bg-green-700 transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">
             Resolver Segundo Orden Homogéneo
         </button>
@@ -116,12 +229,34 @@
                 • Solución general: \( y = y_h + y_p \)
             </p>
         </div>
+        
+        <!-- Parámetros de la Ecuación -->
         <div class="space-y-4">
+            <h4 class="font-medium text-gray-800">Parámetros de la Ecuación:</h4>
             <input type="text" name="second_a_val" placeholder="Coeficiente 'a'" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" required>
             <input type="text" name="second_b_val" placeholder="Coeficiente 'b'" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" required>
             <input type="text" name="second_c_val" placeholder="Coeficiente 'c'" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" required>
             <input type="text" name="second_g_function" placeholder="Función g(x), ej: exp(x)" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" required>
         </div>
+        
+        <!-- Condiciones Iniciales -->
+        <div class="space-y-4 border-t border-gray-200 pt-4">
+            <h4 class="font-medium text-gray-800">Condiciones Iniciales (Opcional):</h4>
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-3">
+                <p class="text-sm text-yellow-800">
+                    <strong>Nota:</strong> Para ecuaciones de segundo orden, puedes proporcionar y(x₀) y y'(x₀).
+                </p>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <input type="text" name="second_x0" placeholder="x₀, ej: 0" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                <input type="text" name="second_y0" placeholder="y(x₀), ej: 1" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <input type="text" name="second_yp0" placeholder="y'(x₀), ej: 2" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                <div class="text-sm text-gray-600 flex items-center">Primera derivada en x₀</div>
+            </div>
+        </div>
+        
         <button type="submit" class="w-full bg-green-600 text-white font-bold py-3 px-6 rounded-lg mt-6 hover:bg-green-700 transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">
             Resolver Segundo Orden No Homogéneo
         </button>

@@ -391,15 +391,34 @@ class MathSolverApp {
         if (data.error) {
             this.showError(data.error);
         } else if (data.solucion) {
-            // Render solution with proper formatting
-            this.resultadoBox.innerHTML = `
+            let resultHTML = `
                 <div class="p-6 bg-green-50 border border-green-200 rounded-lg">
                     <h3 class="text-lg font-bold text-green-800 mb-4">✅ Solución Encontrada</h3>
-                    <div class="text-gray-800">
+                    <div class="text-gray-800 mb-6">
                         ${data.solucion}
                     </div>
-                </div>
             `;
+            
+            // Add steps if available
+            if (data.steps && data.steps.length > 0) {
+                resultHTML += `
+                    <div class="mt-6 pt-4 border-t border-green-200">
+                        <h4 class="text-lg font-bold text-blue-800 mb-4">📋 Pasos de la Solución:</h4>
+                        <ol class="list-decimal list-inside space-y-3 text-gray-800">
+                `;
+                
+                data.steps.forEach(step => {
+                    resultHTML += `<li class="leading-relaxed">${step}</li>`;
+                });
+                
+                resultHTML += `
+                        </ol>
+                    </div>
+                `;
+            }
+            
+            resultHTML += `</div>`;
+            this.resultadoBox.innerHTML = resultHTML;
         } else {
             this.showError('No se recibió una solución válida');
         }
@@ -510,6 +529,21 @@ const solverTemplates = {
                 <input type="text" name="quad_b_val" placeholder="Coeficiente 'b'" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 <input type="text" name="quad_c_val" placeholder="Coeficiente 'c'" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
             </div>
+            
+            <!-- Condiciones Iniciales -->
+            <div class="space-y-4 border-t border-gray-200 pt-4">
+                <h4 class="font-medium text-gray-800">Condición Inicial (Opcional):</h4>
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-3">
+                    <p class="text-sm text-yellow-800">
+                        <strong>Nota:</strong> Si proporcionas una condición inicial, se verificará qué raíz la satisface.
+                    </p>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="text" name="quad_x0" placeholder="x₀, ej: 2" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input type="text" name="quad_y0" placeholder="y(x₀), ej: 0" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+            
             <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-lg mt-6 hover:bg-blue-700 transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
                 Resolver Ecuación Cuadrática
             </button>
@@ -520,9 +554,17 @@ const solverTemplates = {
             <h3 class="text-lg font-semibold text-gray-800">Ecuación de Bernoulli</h3>
             <p class="text-gray-700 mb-4">Resuelve: \\( y' + P(x)y = Q(x)y^n \\)</p>
             <div class="space-y-4">
+                <h4 class="font-medium text-gray-800">Parámetros de la Ecuación:</h4>
                 <input type="text" name="bernoulli_p_function" placeholder="Función P(x), ej: -5" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 <input type="text" name="bernoulli_q_function" placeholder="Función Q(x), ej: -5/2*x" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 <input type="text" name="bernoulli_n_value" placeholder="Exponente 'n', ej: 3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+            <div class="space-y-4 border-t border-gray-200 pt-4">
+                <h4 class="font-medium text-gray-800">Condiciones Iniciales (Opcional):</h4>
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="text" name="bernoulli_x0" placeholder="x₀, ej: 0" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input type="text" name="bernoulli_y0" placeholder="y(x₀), ej: 1" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
             </div>
             <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-lg mt-6 hover:bg-blue-700 transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
                 Resolver Bernoulli

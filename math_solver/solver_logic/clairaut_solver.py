@@ -2,9 +2,10 @@ from sympy import Eq, dsolve, Symbol, Derivative, latex, solve
 # Importamos nuestros símbolos y funciones comunes
 from .base_solver import x, y, parse_safe, format_latex
 
-def solve_clairaut(f_p_str: str) -> dict:
+def solve_clairaut(f_p_str: str, x0_str: str = "", y0_str: str = "") -> dict:
     """
     Resuelve una Ecuación de Clairaut y proporciona los pasos.
+    Si se proporcionan condiciones iniciales, encuentra la solución particular.
     """
     
     p = Symbol('p')

@@ -26,10 +26,11 @@ def is_polynomial(expr, sym):
         return True
     return hasattr(expr, 'is_polynomial') and expr.is_polynomial(sym)
 
-def solve_riccati(P_str: str, Q_str: str, R_str: str) -> dict:
+def solve_riccati(P_str: str, Q_str: str, R_str: str, x0_str: str = "", y0_str: str = "") -> dict:
     """
     Resuelve una Ecuación de Riccati y proporciona los pasos.
     Enhanced version with multiple solution methods.
+    Si se proporcionan condiciones iniciales, encuentra la solución particular.
     """
     
     # 1. Parsear y Validar

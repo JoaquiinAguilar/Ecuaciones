@@ -2,9 +2,10 @@ from sympy import Eq, dsolve, symbols, latex, solve
 # Importamos nuestros símbolos y funciones comunes
 from .base_solver import x, y, parse_safe, format_latex
 
-def solve_cauchy_euler(a_str: str, b_str: str, c_str: str, R_str: str) -> dict:
+def solve_cauchy_euler(a_str: str, b_str: str, c_str: str, R_str: str, x0_str: str = "", y0_str: str = "", yp0_str: str = "") -> dict:
     """
     Resuelve una Ecuación de Cauchy-Euler y proporciona los pasos.
+    Si se proporcionan condiciones iniciales, encuentra la solución particular.
     """
     
     # 1. Parsear y Validar

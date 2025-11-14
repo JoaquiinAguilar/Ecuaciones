@@ -2,7 +2,7 @@ from sympy import Eq, solve, factor, symbols, discriminant, latex
 # Importamos 'x' y nuestras funciones comunes
 from .base_solver import x, parse_safe, format_latex
 
-def solve_quadratic(a_str: str, b_str: str, c_str: str) -> dict:
+def solve_quadratic(a_str: str, b_str: str, c_str: str, x0_str: str = "", y0_str: str = "") -> dict:
     """
     Resuelve una ecuación cuadrática de la forma:
     ax^2 + bx + c = 0
@@ -23,6 +23,17 @@ def solve_quadratic(a_str: str, b_str: str, c_str: str) -> dict:
     c_expr = parse_safe(c_str)
     if c_expr is None:
         return {'error': f"El coeficiente 'c' = '{c_str}' no es válido."}
+
+    # Parsear condiciones iniciales si existen
+    x0_expr = None
+    y0_expr = None
+    has_initial_conditions = False
+    
+    if x0_str and y0_str:
+        x0_expr = parse_safe(x0_str)
+        y0_expr = parse_safe(y0_str)
+        if x0_expr is not None and y0_expr is not None:
+            has_initial_conditions = True
 
     # 2. Construir la Ecuación y el Polinomio
     try:
@@ -54,12 +65,44 @@ def solve_quadratic(a_str: str, b_str: str, c_str: str) -> dict:
         raices_latex = format_latex(raices)
         factorizada_latex = format_latex(factorizada)
         
-        solucion_html = f"""
-            <p class='font-semibold'>Raíces (x):</p>
-            {raices_latex}
-            <p class='font-semibold mt-4'>Forma Factorizada:</p>
-            {factorizada_latex}
-        """
+        # Aplicar condiciones iniciales si existen
+        if has_initial_conditions:
+            steps.append(f"4. **Aplicando condiciones iniciales:** y({latex(x0_expr)}) = {latex(y0_expr)}")
+            # Evaluar cada raíz en la condición inicial
+            valid_roots = []
+            for root in raices:
+                try:
+                    # Verificar si la raíz satisface la condición inicial
+                    if root.subs(x, x0_expr) == y0_expr:
+                        valid_roots.append(root)
+                        steps.append(f"   - Raíz {latex(root)} satisface la condición inicial")
+                except:
+                    pass
+            
+            if valid_roots:
+                solucion_html = f"""
+                    <p class='font-semibold'>Raíces que satisfacen y({latex(x0_expr)}) = {latex(y0_expr)}:</p>
+                    {format_latex(valid_roots)}
+                    <p class='font-semibold mt-4'>Forma Factorizada:</p>
+                    {factorizada_latex}
+                """
+                steps.append(f"5. Raíces válidas: {format_latex(valid_roots)}")
+            else:
+                solucion_html = f"""
+                    <p class='font-semibold'>Raíces (x):</p>
+                    {raices_latex}
+                    <p class='font-semibold mt-4'>Forma Factorizada:</p>
+                    {factorizada_latex}
+                    <p class='text-yellow-600 mt-4'>Nota: Ninguna raíz satisface la condición inicial y({latex(x0_expr)}) = {latex(y0_expr)})</p>
+                """
+                steps.append(f"5. Ninguna raíz satisface la condición inicial")
+        else:
+            solucion_html = f"""
+                <p class='font-semibold'>Raíces (x):</p>
+                {raices_latex}
+                <p class='font-semibold mt-4'>Forma Factorizada:</p>
+                {factorizada_latex}
+            """
         
         # Añadir la solución final a los pasos
         steps.append(f"4. Las raíces de la ecuación son: {raices_latex}")
