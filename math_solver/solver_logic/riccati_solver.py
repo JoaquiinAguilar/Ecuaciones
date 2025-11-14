@@ -1,6 +1,6 @@
 from sympy import Eq, dsolve, latex, symbols, simplify, integrate, exp, log, solve, Function, diff, Rational, classify_ode, sqrt, atan, asin, acos, tan, sin, cos, airyai, airybi, besselj, bessely, hyper, meijerg
-# Importamos nuestros símbolos y funciones comunes
-from .base_solver import x, y, parse_safe, format_latex
+# Importamos nuestras funciones comunes
+from .base_solver import parse_safe, format_latex, create_math_symbols
 
 def is_constant(expr):
     """Safely check if an expression is constant"""
@@ -32,6 +32,9 @@ def solve_riccati(P_str: str, Q_str: str, R_str: str, x0_str: str = "", y0_str: 
     Enhanced version with multiple solution methods.
     Si se proporcionan condiciones iniciales, encuentra la solución particular.
     """
+    
+    # Create fresh symbols for this request
+    x, y = create_math_symbols()
     
     # 1. Parsear y Validar
     p_expr = parse_safe(P_str)
@@ -177,18 +180,20 @@ def solve_riccati(P_str: str, Q_str: str, R_str: str, x0_str: str = "", y0_str: 
         # Método 5: Simplificación
         steps.append("6. **Intentando simplificación**...")
         try:
-            p_simpl = simplify(p_expr)
-            q_simpl = simplify(q_expr)
-            r_simpl = simplify(r_expr)
-            
-            if p_simpl != p_expr or q_simpl != q_expr or r_simpl != r_expr:
-                steps.append("   - Coeficientes simplificados")
-                ecuacion_simpl = Eq(y.diff(x), (p_simpl * y**2) + (q_simpl * y) + r_simpl)
-                sol_simpl = dsolve(ecuacion_simpl, y)
-                if sol_simpl is not None and str(sol_simpl) != "[]":
-                    solucion_latex = format_latex(sol_simpl)
-                    steps.append(f"   - ✅ Solución simplificada: {solucion_latex}")
-                    return {'solucion': solucion_latex, 'steps': steps}
+            # Solo simplificar si las expresiones no son None
+            if p_expr is not None and q_expr is not None and r_expr is not None:
+                p_simpl = simplify(p_expr)
+                q_simpl = simplify(q_expr)
+                r_simpl = simplify(r_expr)
+                
+                if p_simpl != p_expr or q_simpl != q_expr or r_simpl != r_expr:
+                    steps.append("   - Coeficientes simplificados")
+                    ecuacion_simpl = Eq(y.diff(x), (p_simpl * y**2) + (q_simpl * y) + r_simpl)
+                    sol_simpl = dsolve(ecuacion_simpl, y)
+                    if sol_simpl is not None and str(sol_simpl) != "[]":
+                        solucion_latex = format_latex(sol_simpl)
+                        steps.append(f"   - ✅ Solución simplificada: {solucion_latex}")
+                        return {'solucion': solucion_latex, 'steps': steps}
         except Exception as e:
             steps.append(f"   - ❌ Error en simplificación: {e}")
         

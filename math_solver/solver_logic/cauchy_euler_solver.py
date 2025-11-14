@@ -1,12 +1,15 @@
 from sympy import Eq, dsolve, symbols, latex, solve
-# Importamos nuestros símbolos y funciones comunes
-from .base_solver import x, y, parse_safe, format_latex
+# Importamos nuestras funciones comunes
+from .base_solver import parse_safe, format_latex, create_math_symbols
 
 def solve_cauchy_euler(a_str: str, b_str: str, c_str: str, R_str: str, x0_str: str = "", y0_str: str = "", yp0_str: str = "") -> dict:
     """
     Resuelve una Ecuación de Cauchy-Euler y proporciona los pasos.
     Si se proporcionan condiciones iniciales, encuentra la solución particular.
     """
+    
+    # Create fresh symbols for this request
+    x, y = create_math_symbols()
     
     # 1. Parsear y Validar
     a_expr = parse_safe(a_str)
@@ -38,19 +41,18 @@ def solve_cauchy_euler(a_str: str, b_str: str, c_str: str, R_str: str, x0_str: s
         raices_aux = solve(ecuacion_aux, m)
         steps.append(f"3. Se resuelven las raíces de la ecuación auxiliar:")
         steps.append(f"   - Las raíces son: \\( m = {latex(raices_aux)} \\)")
-        steps.append(f"4. Se construye la solución homogénea (\\(y_h\\)) basada en las raíces.")
-        
+
         # 5. Determinar si es homogénea o no homogénea
         if R_expr == 0:
-            steps.append("5. Como la ecuación es homogénea (\\(R(x) = 0\\)), la solución general es igual a la solución homogénea (\\(y = y_h\\)).")
+            steps.append("4. Como la ecuación es homogénea (\\(R(x) = 0\\)), la solución general es igual a la solución homogénea (\\(y = y_h\\)).")
         else:
-            steps.append(f"5. Como \\(R(x) \\neq 0\\), se busca una solución particular (\\(y_p\\)) usando métodos como variación de parámetros.")
+            steps.append(f"4. Como \\(R(x) \\neq 0\\), se busca una solución particular (\\(y_p\\)) usando métodos como variación de parámetros.")
             steps.append(f"   - La solución general es \\(y = y_h + y_p\\).")
 
         # 6. Resolver y Formatear
         solucion = dsolve(ecuacion, y)
         solucion_latex = format_latex(solucion)
-        steps.append(f"6. La solución final combinada es: {solucion_latex}")
+        steps.append(f"5. La solución final combinada es: {solucion_latex}")
 
         return {'solucion': solucion_latex, 'steps': steps}
 

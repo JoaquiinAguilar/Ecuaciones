@@ -1,6 +1,6 @@
-from sympy import Eq, dsolve, symbols, latex, Function, simplify, solve
-# Importamos nuestros símbolos y funciones comunes
-from .base_solver import x, parse_safe, format_latex
+from sympy import Eq, dsolve, symbols, latex, Function, simplify, solve, I
+# Importamos nuestras funciones comunes
+from .base_solver import parse_safe, format_latex, create_math_symbols
 
 def solve_second_order_homogeneous(a_str: str, b_str: str, c_str: str, x0_str: str = "", y0_str: str = "", yp0_str: str = "") -> dict:
     """
@@ -9,9 +9,12 @@ def solve_second_order_homogeneous(a_str: str, b_str: str, c_str: str, x0_str: s
     Si se proporcionan condiciones iniciales, encuentra la solución particular.
     """
     
+    # Create fresh symbols for this request
+    x, y = create_math_symbols()
+    
     # 1. Parsear y Validar
     a_expr = parse_safe(a_str)
-    if a_expr is None or a_expr == 0:
+    if a_expr is None or (isinstance(a_expr, (int, float)) and a_expr == 0):
         return {'error': f"El coeficiente 'a' = '{a_str}' no es válido o es cero."}
 
     b_expr = parse_safe(b_str)
@@ -61,7 +64,7 @@ def solve_second_order_homogeneous(a_str: str, b_str: str, c_str: str, x0_str: s
         if len(raices) == 2:
             r1, r2 = raices
             
-            # Verificar si son reales y distintas
+            # Verificar si son reales y distintas - mejor detección de complejos
             if r1.is_real and r2.is_real and r1 != r2:
                 steps.append("5. **Raíces reales y distintas**: La solución general es \\( y = C_1 e^{r_1 x} + C_2 e^{r_2 x} \\)")
                 steps.append(f"   - Sustituyendo: \\( y = C_1 e^{{{latex(r1)}x}} + C_2 e^{{{latex(r2)}x}} \\)")
@@ -71,14 +74,20 @@ def solve_second_order_homogeneous(a_str: str, b_str: str, c_str: str, x0_str: s
                 steps.append(f"   - Sustituyendo: \\( y = (C_1 + C_2 x)e^{{{latex(r1)}x}} \\)")
                 
             else:
-                # Raíces complejas conjugadas
-                alpha = simplify((r1 + r2) / 2)
-                beta = simplify((r1 - r2) / (2 * symbols('I')))
-                steps.append("5. **Raíces complejas conjugadas**: La solución general es \\( y = e^{\\alpha x}(C_1 \\cos(\\beta x) + C_2 \\sin(\\beta x)) \\)")
-                steps.append(f"   - Con \\( \\alpha = {latex(alpha)} \\) y \\( \\beta = {latex(beta)} \\)")
+                # Raíces complejas conjugadas - detección mejorada
+                # Verificar explícitamente si son complejas conjugadas
+                if not r1.is_real or not r2.is_real:
+                    alpha = simplify((r1 + r2) / 2)
+                    beta = simplify((r1 - r2) / (2 * I))
+                    steps.append("5. **Raíces complejas conjugadas**: La solución general es \\( y = e^{\\alpha x}(C_1 \\cos(\\beta x) + C_2 \\sin(\\beta x)) \\)")
+                    steps.append(f"   - Con \\( \\alpha = {latex(alpha)} \\) y \\( \\beta = {latex(beta)} \\)")
+                else:
+                    # Caso raro: raíces reales pero idénticas
+                    steps.append("5. **Raíces idénticas**: La solución general es \\( y = (C_1 + C_2 x)e^{rx} \\)")
+                    steps.append(f"   - Sustituyendo: \\( y = (C_1 + C_2 x)e^{{{latex(r1)}x}} \\)")
 
         # 7. Resolver con SymPy
-        solucion = dsolve(ecuacion, y_func)
+        solucion = dsolve(ecuacion, y)
         solucion_latex = format_latex(solucion)
         
         # Mencionar condiciones iniciales si existen

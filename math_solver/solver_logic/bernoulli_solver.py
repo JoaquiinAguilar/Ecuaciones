@@ -1,4 +1,4 @@
-from sympy import Eq, dsolve, Function, latex, simplify, integrate, log, solve, symbols, Equality
+from sympy import Eq, dsolve, Function, latex, simplify, integrate, log, solve, symbols
 # Importamos nuestras funciones comunes del base_solver
 from .base_solver import parse_safe, format_latex, create_math_symbols
 
@@ -103,16 +103,17 @@ def solve_bernoulli(P_str: str, Q_str: str, n_str: str, x0_str: str = "", y0_str
             if has_initial_conditions:
                 try:
                     C1 = symbols('C1')
-                    # Extraer la solución del objeto Equality si es necesario
+                    # Obtener la expresión de la solución
                     if hasattr(sol_y, 'rhs'):
-                        sol_expr = getattr(sol_y, 'rhs')
+                        sol_expr = sol_y.rhs
                     else:
                         sol_expr = sol_y
                     
-                    # Resolver para C1 usando condiciones iniciales - manejar caso donde y0_expr podría ser None
+                    # Intentar resolver para C1
                     if x0_expr is not None and y0_expr is not None:
                         equation_for_C1 = sol_expr.subs(x, x0_expr) - y0_expr
                         sol_for_C1 = solve(equation_for_C1, C1)
+                        
                         if sol_for_C1 and len(sol_for_C1) > 0:
                             sol_y_with_ic = sol_expr.subs(C1, sol_for_C1[0])
                             sol_y_with_ic_eq = Eq(y, sol_y_with_ic)

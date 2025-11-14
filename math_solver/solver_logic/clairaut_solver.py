@@ -1,12 +1,15 @@
 from sympy import Eq, dsolve, Symbol, Derivative, latex, solve
-# Importamos nuestros símbolos y funciones comunes
-from .base_solver import x, y, parse_safe, format_latex
+# Importamos nuestras funciones comunes
+from .base_solver import parse_safe, format_latex, create_math_symbols
 
 def solve_clairaut(f_p_str: str, x0_str: str = "", y0_str: str = "") -> dict:
     """
     Resuelve una Ecuación de Clairaut y proporciona los pasos.
     Si se proporcionan condiciones iniciales, encuentra la solución particular.
     """
+    
+    # Create fresh symbols for this request
+    x, y = create_math_symbols()
     
     p = Symbol('p')
     C = Symbol('C1') # Usar C1 para consistencia con dsolve
@@ -57,11 +60,10 @@ def solve_clairaut(f_p_str: str, x0_str: str = "", y0_str: str = "") -> dict:
             return {'solucion': solucion_final_html, 'steps': steps}
         except Exception as solve_error:
             # Si dsolve falla, mostrar la solución general manualmente
-            sol_general_manual = Eq(y, C * x + f_p_expr.subs(p, C))
-            sol_latex = format_latex(sol_general_manual)
-            steps.append(f"4. Solución general: {sol_latex}")
-            steps.append("   Nota: La solución singular requiere eliminación paramétrica manual.")
-            return {'solucion': sol_latex, 'steps': steps}
+            solucion_latex = format_latex(sol_general)
+            steps.append(f"4. Solución general: {solucion_latex}")
+            steps.append("   - Nota: La solución singular requiere eliminación paramétrica manual.")
+            return {'solucion': solucion_latex, 'steps': steps}
 
     except Exception as e:
         if "free symbol" in str(e):
