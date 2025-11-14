@@ -1,6 +1,6 @@
-from sympy import Eq, solve, factor, symbols, discriminant, latex
-# Importamos 'x' y nuestras funciones comunes
-from .base_solver import x, parse_safe, format_latex
+from sympy import Eq, solve, factor, symbols, discriminant, latex, Float
+# Importamos nuestras funciones comunes
+from .base_solver import parse_safe, format_latex, create_math_symbols
 
 def solve_quadratic(a_str: str, b_str: str, c_str: str, x0_str: str = "", y0_str: str = "") -> dict:
     """
@@ -11,9 +11,12 @@ def solve_quadratic(a_str: str, b_str: str, c_str: str, x0_str: str = "", y0_str
     y los pasos para resolverla, formateados en LaTeX, o un mensaje de error.
     """
     
+    # Create fresh symbols for this request
+    x, y = create_math_symbols()
+    
     # 1. Parsear y Validar las Entradas del Usuario
     a_expr = parse_safe(a_str)
-    if a_expr is None or a_expr == 0:
+    if a_expr is None or (isinstance(a_expr, (int, float)) and a_expr == 0):
         return {'error': f"El coeficiente 'a' = '{a_str}' no es válido o es cero."}
 
     b_expr = parse_safe(b_str)

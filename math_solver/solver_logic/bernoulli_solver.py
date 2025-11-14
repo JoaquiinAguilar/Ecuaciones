@@ -1,12 +1,15 @@
-from sympy import Eq, dsolve, Function, latex, simplify, integrate, log, solve, symbols
-# Importamos nuestros símbolos y funciones comunes del base_solver
-from .base_solver import x, y, parse_safe, format_latex
+from sympy import Eq, dsolve, Function, latex, simplify, integrate, log, solve, symbols, Equality
+# Importamos nuestras funciones comunes del base_solver
+from .base_solver import parse_safe, format_latex, create_math_symbols
 
 def solve_bernoulli(P_str: str, Q_str: str, n_str: str, x0_str: str = "", y0_str: str = "") -> dict:
     """
     Resuelve una Ecuación de Bernoulli y proporciona los pasos.
     Si se proporcionan condiciones iniciales, encuentra la solución particular.
     """
+    
+    # Create fresh symbols for this request
+    x, y = create_math_symbols()
     
     # 1. Parsear y Validar
     p_expr = parse_safe(P_str)
@@ -102,22 +105,28 @@ def solve_bernoulli(P_str: str, Q_str: str, n_str: str, x0_str: str = "", y0_str
                     C1 = symbols('C1')
                     # Extraer la solución del objeto Equality si es necesario
                     if hasattr(sol_y, 'rhs'):
-                        sol_expr = sol_y.rhs
+                        sol_expr = getattr(sol_y, 'rhs')
                     else:
                         sol_expr = sol_y
                     
-                    # Resolver para C1 usando condiciones iniciales
-                    sol_for_C1 = solve(sol_expr.subs(x, x0_expr) - y0_expr, C1)
-                    if sol_for_C1:
-                        sol_y_with_ic = sol_expr.subs(C1, sol_for_C1[0])
-                        sol_y_with_ic_eq = Eq(y, sol_y_with_ic)
-                        solucion_latex = format_latex(sol_y_with_ic_eq)
-                        steps.append(f"   - **Aplicando condiciones iniciales:**")
-                        steps.append(f"   - Solución particular: {solucion_latex}")
+                    # Resolver para C1 usando condiciones iniciales - manejar caso donde y0_expr podría ser None
+                    if x0_expr is not None and y0_expr is not None:
+                        equation_for_C1 = sol_expr.subs(x, x0_expr) - y0_expr
+                        sol_for_C1 = solve(equation_for_C1, C1)
+                        if sol_for_C1 and len(sol_for_C1) > 0:
+                            sol_y_with_ic = sol_expr.subs(C1, sol_for_C1[0])
+                            sol_y_with_ic_eq = Eq(y, sol_y_with_ic)
+                            solucion_latex = format_latex(sol_y_with_ic_eq)
+                            steps.append(f"   - **Aplicando condiciones iniciales:**")
+                            steps.append(f"   - Solución particular: {solucion_latex}")
+                        else:
+                            solucion_latex = format_latex(sol_y)
+                            steps.append(f"   - Solución general: {solucion_latex}")
+                            steps.append(f"   - **Nota:** No se pudieron resolver las condiciones iniciales")
                     else:
                         solucion_latex = format_latex(sol_y)
                         steps.append(f"   - Solución general: {solucion_latex}")
-                        steps.append(f"   - **Nota:** No se pudieron resolver las condiciones iniciales")
+                        steps.append(f"   - **Nota:** Condiciones iniciales incompletas")
                 except Exception as ic_error:
                     solucion_latex = format_latex(sol_y)
                     steps.append(f"   - Solución general: {solucion_latex}")
