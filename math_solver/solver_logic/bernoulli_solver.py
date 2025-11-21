@@ -22,18 +22,18 @@ def solve_bernoulli(P_str: str, Q_str: str, n_str: str) -> dict:
     try:
         # 2. Construir Ecuación Original
         ecuacion_original = Eq(y.diff(x) + p_expr * y, q_expr * y**n_expr)
-        steps.append(f"La ecuación de Bernoulli es: \\( {latex(ecuacion_original)} \\)")
-        steps.append(f"   - Con \\( P(x) = {latex(p_expr)} \\), \\( Q(x) = {latex(q_expr)} \\) y \\( n = {latex(n_expr)} \\).")
+        steps.append(rf"La ecuación de Bernoulli es: \( {latex(ecuacion_original)} \)")
+        steps.append(rf"   - Con \( P(x) = {latex(p_expr)} \), \( Q(x) = {latex(q_expr)} \) y \( n = {latex(n_expr)} \).")
 
         # 3. Manejo de Casos Especiales
         if n_expr == 0:
             steps.append("3. **Caso Especial: n = 0**")
-            steps.append("   - La ecuación se convierte en: \\( y' + P(x)y = Q(x) \\)")
+            steps.append(r"   - La ecuación se convierte en: \( y' + P(x)y = Q(x) \)")
             steps.append("   - Esta es una ecuación diferencial lineal de primer orden.")
             
             # Resolver como ecuación lineal
             ecuacion_lineal = Eq(y.diff(x) + p_expr * y, q_expr)
-            steps.append(f"   - Ecuación lineal: \\( {latex(ecuacion_lineal)} \\)")
+            steps.append(rf"   - Ecuación lineal: \( {latex(ecuacion_lineal)} \)")
             
             sol_y = dsolve(ecuacion_lineal, y)
             solucion_latex = format_latex(sol_y)
@@ -41,13 +41,13 @@ def solve_bernoulli(P_str: str, Q_str: str, n_str: str) -> dict:
             
         elif n_expr == 1:
             steps.append("3. **Caso Especial: n = 1**")
-            steps.append("   - La ecuación se convierte en: \\( y' + P(x)y = Q(x)y \\)")
-            steps.append("   - Reorganizando: \\( y' = (Q(x) - P(x))y \\)")
+            steps.append(r"   - La ecuación se convierte en: \( y' + P(x)y = Q(x)y \)")
+            steps.append(r"   - Reorganizando: \( y' = (Q(x) - P(x))y \)")
             steps.append("   - Esta es una ecuación separable.")
             
             # Resolver como ecuación separable
             q_menos_p = q_expr - p_expr
-            steps.append(f"   - Ecuación separable: \\( \\frac{{dy}}{{y}} = ({latex(q_menos_p)})dx \\)")
+            steps.append(rf"   - Ecuación separable: \( \frac{{dy}}{{y}} = ({latex(q_menos_p)})dx \)")
             
             # Integrar ambos lados
             integral_izq = log(y)
@@ -63,21 +63,21 @@ def solve_bernoulli(P_str: str, Q_str: str, n_str: str) -> dict:
             steps.append("3. **Caso General: n ≠ 0, 1**")
             v = Function('v')(x)
             m = 1 - n_expr
-            steps.append(f"Se aplica la sustitución \\( v = y^{{1-n}} = y^{{{m}}} \\). Esto la convierte en una EDO lineal.")
+            steps.append(rf"Se aplica la sustitución \( v = y^{{1-n}} = y^{{{m}}} \). Esto la convierte en una EDO lineal.")
             
             # Ecuación lineal en v: v' + (1-n)P(x)v = (1-n)Q(x)
             p_lineal = m * p_expr
             q_lineal = m * q_expr
             ecuacion_lineal = Eq(v.diff(x) + p_lineal * v, q_lineal)
-            steps.append(f"   - La ecuación lineal transformada para \\(v(x)\\) es: \\( {latex(ecuacion_lineal)} \\)")
+            steps.append(rf"   - La ecuación lineal transformada para \(v(x)\) es: \( {latex(ecuacion_lineal)} \)")
 
             # 5. Resolver la Ecuación Lineal para v(x)
-            steps.append(f"Se resuelve la ecuación lineal para \\(v(x)\\), usualmente con un factor integrante.")
+            steps.append(rf"Se resuelve la ecuación lineal para \(v(x)\), usualmente con un factor integrante.")
             sol_v = dsolve(ecuacion_lineal, v)
-            steps.append(f"   - La solución para \\(v(x)\\) es: \\( {latex(sol_v)} \\)")
+            steps.append(rf"   - La solución para \(v(x)\) es: \( {latex(sol_v)} \)")
 
             # 6. Sustituir de Vuelta a y(x)
-            steps.append(f"Finalmente, se sustituye \\( v = y^{{{m}}} \\) para obtener la solución para \\(y(x)\\).")
+            steps.append(rf"Finalmente, se sustituye \( v = y^{{{m}}} \) para obtener la solución para \(y(x)\).")
             sol_y = dsolve(ecuacion_original, y)
             solucion_latex = format_latex(sol_y)
             steps.append(f"   - La solución final es: {solucion_latex}")

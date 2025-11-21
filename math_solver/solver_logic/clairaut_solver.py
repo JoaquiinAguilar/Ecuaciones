@@ -24,18 +24,18 @@ def solve_clairaut(f_p_str: str) -> dict:
         # 2. Construir la Ecuación Original
         y_p = y.diff(x)
         ecuacion = Eq(y, x * y_p + f_p_expr.subs(p, y_p))
-        steps.append(f"1. La ecuación de Clairaut es \\( y = xy' + f(y') \\).")
-        steps.append(f"   - Con \\( f(y') \\) representada por \\( f(p) = {latex(f_p_expr)} \\), la ecuación es: \\( {latex(ecuacion)} \\)")
+        steps.append(r"1. La ecuación de Clairaut es \( y = xy' + f(y') \).")
+        steps.append(rf"   - Con \( f(y') \) representada por \( f(p) = {latex(f_p_expr)} \), la ecuación es: \( {latex(ecuacion)} \)")
         # 3. Solución General (manual)
         sol_general = Eq(y, C * x + f_p_expr.subs(p, C))
-        steps.append("2. La <strong>solución general</strong> se obtiene reemplazando \\( y' \\) por una constante arbitraria \\( C \\).")
-        steps.append(f"   - Solución General: \\( {latex(sol_general)} \\)")
+        steps.append(r"2. La <strong>solución general</strong> se obtiene reemplazando \( y' \) por una constante arbitraria \( C \).")
+        steps.append(rf"   - Solución General: \( {latex(sol_general)} \)")
         
         # 4. Solución Singular
         f_p_deriv = f_p_expr.diff(p)
-        steps.append("3. La <strong>solución singular</strong> (o envolvente) se encuentra derivando con respecto a \\( p \\) y eliminando el parámetro.")
-        steps.append(f"   - Derivando: \\( \\frac{{df}}{{dp}} = {latex(f_p_deriv)} \\)")
-        steps.append(f"   - La solución singular está dada por: \\( x = {latex(-f_p_deriv)} \\)")
+        steps.append(r"3. La <strong>solución singular</strong> (o envolvente) se encuentra derivando con respecto a \( p \) y eliminando el parámetro.")
+        steps.append(rf"   - Derivando: \( \frac{{df}}{{dp}} = {latex(f_p_deriv)} \)")
+        steps.append(rf"   - La solución singular está dada por: \( x = {latex(-f_p_deriv)} \)")
         steps.append("   - Esta relación junto con la ecuación original define la solución singular.")
 
         # 5. Resolver y Formatear

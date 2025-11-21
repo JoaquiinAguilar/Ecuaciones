@@ -26,17 +26,17 @@ def solve_second_order_homogeneous(a_str: str, b_str: str, c_str: str) -> dict:
         # 2. Construir la Ecuación
         y_func = Function('y')(x)
         ecuacion = Eq(a_expr * y_func.diff(x, 2) + b_expr * y_func.diff(x) + c_expr * y_func, 0)
-        steps.append(f"1. La ecuación diferencial de segundo orden es: \\( {latex(ecuacion)} \\)")
+        steps.append(rf"1. La ecuación diferencial de segundo orden es: \( {latex(ecuacion)} \)")
         steps.append(f"   - Coeficientes: a = {latex(a_expr)}, b = {latex(b_expr)}, c = {latex(c_expr)}")
 
         # 3. Ecuación Característica
         r = symbols('r')
         ecuacion_caracteristica = Eq(a_expr * r**2 + b_expr * r + c_expr, 0)
-        steps.append(f"2. La ecuación característica es: \\( {latex(ecuacion_caracteristica)} \\)")
+        steps.append(rf"2. La ecuación característica es: \( {latex(ecuacion_caracteristica)} \)")
 
         # 4. Resolver la Ecuación Característica
         raices = solve(ecuacion_caracteristica, r)
-        steps.append(f"3. Las raíces de la ecuación característica son: \\( r = {latex(raices)} \\)")
+        steps.append(rf"3. Las raíces de la ecuación característica son: \( r = {latex(raices)} \)")
 
         # 5. Determinar el tipo de solución según las raíces
         if len(raices) == 2:
@@ -44,19 +44,19 @@ def solve_second_order_homogeneous(a_str: str, b_str: str, c_str: str) -> dict:
             
             # Verificar si son reales y distintas
             if r1.is_real and r2.is_real and r1 != r2:
-                steps.append("4. **Raíces reales y distintas**: La solución general es \\( y = C_1 e^{r_1 x} + C_2 e^{r_2 x} \\)")
-                steps.append(f"   - Sustituyendo: \\( y = C_1 e^{{{latex(r1)}x}} + C_2 e^{{{latex(r2)}x}} \\)")
+                steps.append(r"4. **Raíces reales y distintas**: La solución general es \( y = C_1 e^{r_1 x} + C_2 e^{r_2 x} \)")
+                steps.append(rf"   - Sustituyendo: \( y = C_1 e^{{{latex(r1)}x}} + C_2 e^{{{latex(r2)}x}} \)")
                 
             elif r1.is_real and r2.is_real and r1 == r2:
-                steps.append("4. **Raíz real doble**: La solución general es \\( y = (C_1 + C_2 x)e^{rx} \\)")
-                steps.append(f"   - Sustituyendo: \\( y = (C_1 + C_2 x)e^{{{latex(r1)}x}} \\)")
+                steps.append(r"4. **Raíz real doble**: La solución general es \( y = (C_1 + C_2 x)e^{rx} \)")
+                steps.append(rf"   - Sustituyendo: \( y = (C_1 + C_2 x)e^{{{latex(r1)}x}} \)")
                 
             else:
                 # Raíces complejas conjugadas
                 alpha = simplify((r1 + r2) / 2)
                 beta = simplify((r1 - r2) / (2 * symbols('I')))
-                steps.append("4. **Raíces complejas conjugadas**: La solución general es \\( y = e^{\\alpha x}(C_1 \\cos(\\beta x) + C_2 \\sin(\\beta x)) \\)")
-                steps.append(f"   - Con \\( \\alpha = {latex(alpha)} \\) y \\( \\beta = {latex(beta)} \\)")
+                steps.append(r"4. **Raíces complejas conjugadas**: La solución general es \( y = e^{\alpha x}(C_1 \cos(\beta x) + C_2 \sin(\beta x)) \)")
+                steps.append(rf"   - Con \( \alpha = {latex(alpha)} \) y \( \beta = {latex(beta)} \)")
 
         # 6. Resolver con SymPy
         solucion = dsolve(ecuacion, y_func)
@@ -96,7 +96,7 @@ def solve_second_order_nonhomogeneous(a_str: str, b_str: str, c_str: str, g_str:
         # 2. Construir la Ecuación
         y_func = Function('y')(x)
         ecuacion = Eq(a_expr * y_func.diff(x, 2) + b_expr * y_func.diff(x) + c_expr * y_func, g_expr)
-        steps.append(f"1. La ecuación diferencial no homogénea de segundo orden es: \\( {latex(ecuacion)} \\)")
+        steps.append(rf"1. La ecuación diferencial no homogénea de segundo orden es: \( {latex(ecuacion)} \)")
         steps.append(f"   - Coeficientes: a = {latex(a_expr)}, b = {latex(b_expr)}, c = {latex(c_expr)}")
         steps.append(f"   - Término no homogéneo: g(x) = {latex(g_expr)}")
 

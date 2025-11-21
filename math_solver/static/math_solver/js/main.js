@@ -391,6 +391,19 @@ class MathSolverApp {
         if (data.error) {
             this.showError(data.error);
         } else if (data.solucion) {
+            // Generate steps HTML if steps exist
+            let stepsHtml = '';
+            if (data.steps && data.steps.length > 0) {
+                stepsHtml = `
+                    <div class="mt-6 pt-4 border-t border-gray-200">
+                        <p class="font-bold text-xl mb-4 text-blue-700">Pasos de la Solución:</p>
+                        <ol class="list-decimal list-inside space-y-2 text-gray-800">
+                            ${data.steps.map(step => `<li>${step}</li>`).join('')}
+                        </ol>
+                    </div>
+                `;
+            }
+            
             // Render solution with proper formatting
             this.resultadoBox.innerHTML = `
                 <div class="p-6 bg-green-50 border border-green-200 rounded-lg">
@@ -398,6 +411,7 @@ class MathSolverApp {
                     <div class="text-gray-800">
                         ${data.solucion}
                     </div>
+                    ${stepsHtml}
                 </div>
             `;
         } else {
