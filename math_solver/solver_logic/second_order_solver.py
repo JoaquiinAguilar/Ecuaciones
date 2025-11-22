@@ -2,10 +2,17 @@ from sympy import Eq, dsolve, symbols, latex, Function, simplify, solve
 # Importamos nuestros símbolos y funciones comunes
 from .base_solver import x, parse_safe, format_latex
 
-def solve_second_order_homogeneous(a_str: str, b_str: str, c_str: str) -> dict:
+def solve_second_order_homogeneous(a_str: str, b_str: str, c_str: str, 
+                                    x0_str: str = None, y0_str: str = None, y_prime_0_str: str = None) -> dict:
     """
     Resuelve ecuaciones diferenciales lineales homogéneas de segundo orden:
     ay'' + by' + cy = 0
+    
+    Args:
+        a_str, b_str, c_str: Coeficientes de la ecuación
+        x0_str: (Opcional) Valor inicial x₀ para IVP
+        y0_str: (Opcional) Valor inicial y(x₀) para IVP 
+        y_prime_0_str: (Opcional) Valor inicial y'(x₀) para IVP
     """
     
     # 1. Parsear y Validar
@@ -20,6 +27,18 @@ def solve_second_order_homogeneous(a_str: str, b_str: str, c_str: str) -> dict:
     c_expr = parse_safe(c_str)
     if c_expr is None:
         return {'error': f"El coeficiente 'c' = '{c_str}' no es válido."}
+    
+    # 1b. Validar condiciones iniciales si se proporcionan
+    is_ivp = x0_str is not None and y0_str is not None and y_prime_0_str is not None
+    if is_ivp:
+        x0_expr = parse_safe(x0_str)
+        if x0_expr is None: return {'error': f"x₀ = '{x0_str}' no es válido."}
+        
+        y0_expr = parse_safe(y0_str)
+        if y0_expr is None: return {'error': f"y₀ = '{y0_str}' no es válido."}
+        
+        y_prime_0_expr = parse_safe(y_prime_0_str)
+        if y_prime_0_expr is None: return {'error': f"y'₀ = '{y_prime_0_str}' no es válido."}
 
     steps = []
     try:
@@ -28,6 +47,12 @@ def solve_second_order_homogeneous(a_str: str, b_str: str, c_str: str) -> dict:
         ecuacion = Eq(a_expr * y_func.diff(x, 2) + b_expr * y_func.diff(x) + c_expr * y_func, 0)
         steps.append(rf"1. La ecuación diferencial de segundo orden es: \( {latex(ecuacion)} \)")
         steps.append(f"   - Coeficientes: a = {latex(a_expr)}, b = {latex(b_expr)}, c = {latex(c_expr)}")
+        
+        # 2b. Mostrar condiciones iniciales si es IVP
+        if is_ivp:
+            steps.append(rf"**Problema de Valor Inicial (IVP)**:")
+            steps.append(rf"   - Condición inicial: \( y({latex(x0_expr)}) = {latex(y0_expr)} \)")
+            steps.append(rf"   - Condición inicial (derivada): \( y'({latex(x0_expr)}) = {latex(y_prime_0_expr)} \)")
 
         # 3. Ecuación Característica
         r = symbols('r')
@@ -59,19 +84,36 @@ def solve_second_order_homogeneous(a_str: str, b_str: str, c_str: str) -> dict:
                 steps.append(rf"   - Con \( \alpha = {latex(alpha)} \) y \( \beta = {latex(beta)} \)")
 
         # 6. Resolver con SymPy
-        solucion = dsolve(ecuacion, y_func)
+        if is_ivp:
+            ics = {
+                y_func.subs(x, x0_expr): y0_expr,
+                y_func.diff(x).subs(x, x0_expr): y_prime_0_expr
+            }
+            solucion = dsolve(ecuacion, y_func, ics=ics)
+            steps.append(f"5. La solución con IVP es: {format_latex(solucion)}")
+        else:
+            solucion = dsolve(ecuacion, y_func)
+            steps.append(f"5. La solución general es: {format_latex(solucion)}")
+            
         solucion_latex = format_latex(solucion)
-        steps.append(f"5. La solución final es: {solucion_latex}")
 
         return {'solucion': solucion_latex, 'steps': steps}
 
     except Exception as e:
         return {'error': f"Error al resolver la ecuación: {e}"}
 
-def solve_second_order_nonhomogeneous(a_str: str, b_str: str, c_str: str, g_str: str) -> dict:
+def solve_second_order_nonhomogeneous(a_str: str, b_str: str, c_str: str, g_str: str,
+                                       x0_str: str = None, y0_str: str = None, y_prime_0_str: str = None) -> dict:
     """
     Resuelve ecuaciones diferenciales lineales no homogéneas de segundo orden:
     ay'' + by' + cy = g(x)
+    
+    Args:
+        a_str, b_str, c_str: Coeficientes de la ecuación
+        g_str: Función g(x) lado derecho
+        x0_str: (Opcional) Valor inicial x₀ para IVP
+        y0_str: (Opcional) Valor inicial y(x₀) para IVP
+        y_prime_0_str: (Opcional) Valor inicial y'(x₀) para IVP
     """
     
     # 1. Parsear y Validar
@@ -90,6 +132,18 @@ def solve_second_order_nonhomogeneous(a_str: str, b_str: str, c_str: str, g_str:
     g_expr = parse_safe(g_str)
     if g_expr is None:
         return {'error': f"La función g(x) = '{g_str}' no es válida."}
+    
+    # 1b. Validar condiciones iniciales
+    is_ivp = x0_str is not None and y0_str is not None and y_prime_0_str is not None
+    if is_ivp:
+        x0_expr = parse_safe(x0_str)
+        if x0_expr is None: return {'error': f"x₀ = '{x0_str}' no es válido."}
+        
+        y0_expr = parse_safe(y0_str)
+        if y0_expr is None: return {'error': f"y₀ = '{y0_str}' no es válido."}
+        
+        y_prime_0_expr = parse_safe(y_prime_0_str)
+        if y_prime_0_expr is None: return {'error': f"y'₀ = '{y_prime_0_str}' no es válido."}
 
     steps = []
     try:
@@ -99,6 +153,12 @@ def solve_second_order_nonhomogeneous(a_str: str, b_str: str, c_str: str, g_str:
         steps.append(rf"1. La ecuación diferencial no homogénea de segundo orden es: \( {latex(ecuacion)} \)")
         steps.append(f"   - Coeficientes: a = {latex(a_expr)}, b = {latex(b_expr)}, c = {latex(c_expr)}")
         steps.append(f"   - Término no homogéneo: g(x) = {latex(g_expr)}")
+        
+        # 2b. Mostrar condiciones iniciales si es IVP
+        if is_ivp:
+            steps.append(rf"**Problema de Valor Inicial (IVP)**:")
+            steps.append(rf"   - \( y({latex(x0_expr)}) = {latex(y0_expr)} \)")
+            steps.append(rf"   - \( y'({latex(x0_expr)}) = {latex(y_prime_0_expr)} \)")
 
         # 3. Explicación del método
         steps.append("2. **Método de Solución**:")
@@ -107,9 +167,18 @@ def solve_second_order_nonhomogeneous(a_str: str, b_str: str, c_str: str, g_str:
         steps.append("   - La solución general es: y = y_h + y_p")
 
         # 4. Resolver con SymPy
-        solucion = dsolve(ecuacion, y_func)
+        if is_ivp:
+            ics = {
+                y_func.subs(x, x0_expr): y0_expr,
+                y_func.diff(x).subs(x, x0_expr): y_prime_0_expr
+            }
+            solucion = dsolve(ecuacion, y_func, ics=ics)
+            steps.append(f"3. La solución con IVP encontrada por SymPy es: {format_latex(solucion)}")
+        else:
+            solucion = dsolve(ecuacion, y_func)
+            steps.append(f"3. La solución general encontrada por SymPy es: {format_latex(solucion)}")
+            
         solucion_latex = format_latex(solucion)
-        steps.append(f"3. La solución encontrada por SymPy es: {solucion_latex}")
 
         return {'solucion': solucion_latex, 'steps': steps}
 

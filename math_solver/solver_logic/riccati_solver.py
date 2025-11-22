@@ -26,10 +26,15 @@ def is_polynomial(expr, sym):
         return True
     return hasattr(expr, 'is_polynomial') and expr.is_polynomial(sym)
 
-def solve_riccati(P_str: str, Q_str: str, R_str: str) -> dict:
+def solve_riccati(P_str: str, Q_str: str, R_str: str, x0_str: str = None, y0_str: str = None) -> dict:
     """
     Resuelve una Ecuación de Riccati y proporciona los pasos.
-    Enhanced version with multiple solution methods.
+    Enhanced version with multiple solution methods and optional IVP support.
+    
+    Args:
+        P_str, Q_str, R_str: Coefficients P(x), Q(x), R(x)
+        x0_str: (Opcional) Valor inicial x₀ para IVP
+        y0_str: (Opcional) Valor inicial y(x₀) para IVP
     """
     
     # 1. Parsear y Validar
@@ -41,6 +46,15 @@ def solve_riccati(P_str: str, Q_str: str, R_str: str) -> dict:
 
     r_expr = parse_safe(R_str)
     if r_expr is None: return {'error': f"R(x) = '{R_str}' no es válida."}
+    
+    # 1b. Validar condiciones iniciales si se proporcionan
+    is_ivp = x0_str is not None and y0_str is not None
+    if is_ivp:
+        x0_expr = parse_safe(x0_str)
+        if x0_expr is None: return {'error': f"x₀ = '{x0_str}' no es válido."}
+        
+        y0_expr = parse_safe(y0_str)
+        if y0_expr is None: return {'error': f"y₀ = '{y0_str }' no es válido."}
 
     steps = []
     try:
@@ -54,10 +68,21 @@ def solve_riccati(P_str: str, Q_str: str, R_str: str) -> dict:
         steps.append(f"1. La ecuación de Riccati es: $${ecuacion_latex}$$")
         steps.append(f"   - Con $$P(x) = {p_latex}$$, $$Q(x) = {q_latex}$$ y $$R(x) = {r_latex}$$.")
         
+        # 1b. Mostrar condiciones iniciales si es IVP
+        if is_ivp:
+            steps.append(rf"**Problema de Valor Inicial (IVP)**:")
+            steps.append(rf"   - Condición inicial: \\( y({latex(x0_expr)}) = {latex(y0_expr)} \\)")
+        
         # Método 1: Intentar dsolve directo primero
         steps.append("2. **Intentando método directo con SymPy**...")
         try:
-            solucion_directa = dsolve(ecuacion, y)
+            # Use ics if IVP
+            if is_ivp:
+                ics = {y.subs(x, x0_expr): y0_expr}
+                solucion_directa = dsolve(ecuacion, y, ics=ics)
+            else:
+                solucion_directa = dsolve(ecuacion, y)
+                
             # FIXED: Check if solution exists without truth value issues
             if solucion_directa is not None and str(solucion_directa) != "[]":
                 solucion_latex = format_latex(solucion_directa)

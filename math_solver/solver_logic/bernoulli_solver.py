@@ -2,9 +2,19 @@ from sympy import Eq, dsolve, Function, pde_separate_add, latex, simplify, integ
 # Importamos nuestros símbolos y funciones comunes del base_solver
 from .base_solver import x, y, parse_safe, format_latex
 
-def solve_bernoulli(P_str: str, Q_str: str, n_str: str) -> dict:
+def solve_bernoulli(P_str: str, Q_str: str, n_str: str, x0_str: str = None, y0_str: str = None) -> dict:
     """
     Resuelve una ecuación de Bernoulli y proporciona los pasos.
+    
+    Args:
+        P_str: Función P(x) como string
+        Q_str: Función Q(x) como string
+        n_str: Exponente n como string
+        x0_str: (Opcional) Valor inicial x₀ para IVP
+        y0_str: (Opcional) Valor inicial y(x₀) para IVP
+    
+    Returns:
+        dict con 'solucion', 'steps', o 'error'
     """
     
     # 1. Parsear y Validar
@@ -16,6 +26,15 @@ def solve_bernoulli(P_str: str, Q_str: str, n_str: str) -> dict:
 
     n_expr = parse_safe(n_str)
     if n_expr is None: return {'error': f"n = '{n_str}' no es válido."}
+    
+    # 1b. Validar condiciones iniciales si se proporcionan
+    is_ivp = x0_str is not None and y0_str is not None
+    if is_ivp:
+        x0_expr = parse_safe(x0_str)
+        if x0_expr is None: return {'error': f"x₀ = '{x0_str}' no es válido."}
+        
+        y0_expr = parse_safe(y0_str)
+        if y0_expr is None: return {'error': f"y₀ = '{y0_str}' no es válido."}
 
     # --- Inicio de la Generación de Pasos ---
     steps = []
@@ -24,6 +43,11 @@ def solve_bernoulli(P_str: str, Q_str: str, n_str: str) -> dict:
         ecuacion_original = Eq(y.diff(x) + p_expr * y, q_expr * y**n_expr)
         steps.append(rf"La ecuación de Bernoulli es: \( {latex(ecuacion_original)} \)")
         steps.append(rf"   - Con \( P(x) = {latex(p_expr)} \), \( Q(x) = {latex(q_expr)} \) y \( n = {latex(n_expr)} \).")
+        
+        # 2b. Mostrar condiciones iniciales si es IVP
+        if is_ivp:
+            steps.append(rf"**Problema de Valor Inicial (IVP)**:")
+            steps.append(rf"   - Condición inicial: \( y({latex(x0_expr)}) = {latex(y0_expr)} \)")
 
         # 3. Manejo de Casos Especiales
         if n_expr == 0:
@@ -35,9 +59,16 @@ def solve_bernoulli(P_str: str, Q_str: str, n_str: str) -> dict:
             ecuacion_lineal = Eq(y.diff(x) + p_expr * y, q_expr)
             steps.append(rf"   - Ecuación lineal: \( {latex(ecuacion_lineal)} \)")
             
-            sol_y = dsolve(ecuacion_lineal, y)
+            # Resolver con o sin IVP
+            if is_ivp:
+                ics = {y.subs(x, x0_expr): y0_expr}
+                sol_y = dsolve(ecuacion_lineal, y, ics=ics)
+                steps.append(f"   - Solución usando método de ecuación lineal con IVP: {format_latex(sol_y)}")
+            else:
+                sol_y = dsolve(ecuacion_lineal, y)
+                steps.append(f"   - Solución usando método de ecuación lineal: {format_latex(sol_y)}")
+            
             solucion_latex = format_latex(sol_y)
-            steps.append(f"   - Solución usando método de ecuación lineal: {solucion_latex}")
             
         elif n_expr == 1:
             steps.append("3. **Caso Especial: n = 1**")
@@ -54,9 +85,16 @@ def solve_bernoulli(P_str: str, Q_str: str, n_str: str) -> dict:
             integral_der = integrate(q_menos_p, x)
             sol_separable = Eq(integral_izq, integral_der)
             
-            sol_y = dsolve(ecuacion_original, y)
+            # Resolver con o sin IVP
+            if is_ivp:
+                ics = {y.subs(x, x0_expr): y0_expr}
+                sol_y = dsolve(ecuacion_original, y, ics=ics)
+                steps.append(f"   - Solución por separación de variables con IVP: {format_latex(sol_y)}")
+            else:
+                sol_y = dsolve(ecuacion_original, y)
+                steps.append(f"   - Solución por separación de variables: {format_latex(sol_y)}")
+                
             solucion_latex = format_latex(sol_y)
-            steps.append(f"   - Solución por separación de variables: {solucion_latex}")
             
         else:
             # 4. Transformación a Lineal (caso general)
@@ -78,9 +116,17 @@ def solve_bernoulli(P_str: str, Q_str: str, n_str: str) -> dict:
 
             # 6. Sustituir de Vuelta a y(x)
             steps.append(rf"Finalmente, se sustituye \( v = y^{{{m}}} \) para obtener la solución para \(y(x)\).")
-            sol_y = dsolve(ecuacion_original, y)
+            
+            # Resolver con o sin IVP
+            if is_ivp:
+                ics = {y.subs(x, x0_expr): y0_expr}
+                sol_y = dsolve(ecuacion_original, y, ics=ics)
+                steps.append(f"   - La solución final con IVP es: {format_latex(sol_y)}")
+            else:
+                sol_y = dsolve(ecuacion_original, y)
+                steps.append(f"   - La solución final es: {format_latex(sol_y)}")
+                
             solucion_latex = format_latex(sol_y)
-            steps.append(f"   - La solución final es: {solucion_latex}")
 
         return {'solucion': solucion_latex, 'steps': steps}
 

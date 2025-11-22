@@ -18,7 +18,7 @@ class MathSolverApp {
         this.solverStates = {}; // Store form data for each solver type
         this.solutionHistory = {}; // Store solutions for each solver type
         this.currentSolver = 'quadratic';
-        
+
         // Load saved state from localStorage
         this.loadStateFromStorage();
     }
@@ -30,9 +30,9 @@ class MathSolverApp {
         this.solverForm = document.getElementById('solver-form');
         this.functionBtns = document.querySelectorAll('.function-btn');
         this.solverNavBtns = document.querySelectorAll('.solver-nav-btn');
-        
+
         // Store placeholder HTML
-        this.resultadoPlaceholderHTML = document.getElementById('resultado-placeholder')?.outerHTML || 
+        this.resultadoPlaceholderHTML = document.getElementById('resultado-placeholder')?.outerHTML ||
             '<div class="text-center text-gray-500 pt-16"><svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg><p class="text-lg font-medium">Tu solución aparecerá aquí...</p><p class="text-sm mt-2">Selecciona un tipo de ecuación y completa los parámetros</p></div>';
     }
 
@@ -88,10 +88,23 @@ class MathSolverApp {
                 e.preventDefault();
                 this.showFunctionPaletteHint();
             }
-            
+
             // Escape to hide function palette hint
             if (e.code === 'Escape') {
                 this.hideFunctionPaletteHint();
+            }
+        });
+
+        // IVP Toggle Handler - Event delegation for dynamically loaded templates
+        document.addEventListener('change', (e) => {
+            if (e.target.classList.contains('ivp-toggle')) {
+                const toggleId = e.target.id;
+                const solverPrefix = toggleId.replace('-ivp-toggle', '');
+                const ivpFields = document.getElementById(`${solverPrefix}-ivp-fields`);
+
+                if (ivpFields) {
+                    ivpFields.classList.toggle('hidden', !e.target.checked);
+                }
             }
         });
     }
@@ -133,14 +146,14 @@ class MathSolverApp {
     saveCurrentState() {
         const formData = new FormData(this.solverForm);
         const state = {};
-        
+
         // Save all form inputs except hidden solver type
         for (let [key, value] of formData.entries()) {
             if (key !== 'solver_type' && key !== 'csrfmiddlewaretoken') {
                 state[key] = value;
             }
         }
-        
+
         this.solverStates[this.currentSolver] = state;
         this.saveStateToStorage();
     }
@@ -175,7 +188,7 @@ class MathSolverApp {
     switchSolver(solverType, clearResults = true) {
         // Save current state before switching
         this.saveCurrentState();
-        
+
         // Update current solver
         this.currentSolver = solverType;
         this.solverTypeInput.value = solverType;
@@ -206,7 +219,7 @@ class MathSolverApp {
 
         // Force MathJax to re-render after template loads
         this.rerenderMathJax();
-        
+
         // Save state to storage
         this.saveStateToStorage();
     }
@@ -230,11 +243,11 @@ class MathSolverApp {
 
     loadSolverTemplate(solverType) {
         const template = document.getElementById(`template-${solverType}`);
-        
+
         if (template) {
             // Clone template content
             const content = template.content.cloneNode(true);
-            
+
             // Clear current content and append new
             this.solverContent.innerHTML = '';
             this.solverContent.appendChild(content);
@@ -270,7 +283,7 @@ class MathSolverApp {
         inputs.forEach((input, index) => {
             input.style.opacity = '0';
             input.style.transform = 'translateY(10px)';
-            
+
             setTimeout(() => {
                 input.style.transition = 'all 0.3s ease';
                 input.style.opacity = '1';
@@ -283,7 +296,7 @@ class MathSolverApp {
         // Add keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             if (e.ctrlKey || e.metaKey) {
-                switch(e.key) {
+                switch (e.key) {
                     case 's':
                         e.preventDefault();
                         this.insertFunction('sin(x)');
@@ -315,7 +328,7 @@ class MathSolverApp {
             const start = this.currentInput.selectionStart;
             const end = this.currentInput.selectionEnd;
             const currentValue = this.currentInput.value;
-            
+
             // Insert the function at cursor position
             this.currentInput.value = currentValue.substring(0, start) + funcText + currentValue.substring(end);
             this.currentInput.selectionStart = this.currentInput.selectionEnd = start + funcText.length;
@@ -326,7 +339,7 @@ class MathSolverApp {
             setTimeout(() => {
                 this.currentInput.classList.remove('ring-2', 'ring-blue-400', 'function-insert-animation');
             }, 500);
-            
+
             // Save state after insertion
             this.saveCurrentStateDebounced();
         }
@@ -334,7 +347,7 @@ class MathSolverApp {
 
     clearResults() {
         this.resultadoBox.innerHTML = this.resultadoPlaceholderHTML;
-        
+
         // Re-render MathJax if necessary
         if (window.MathJax) {
             window.MathJax.typesetClear([this.resultadoBox]);
@@ -354,7 +367,7 @@ class MathSolverApp {
 
     submitForm() {
         const formData = new FormData(this.solverForm);
-        
+
         // Submit via fetch to avoid page reload
         fetch(this.solverForm.action, {
             method: 'POST',
@@ -364,27 +377,27 @@ class MathSolverApp {
                 'Accept': 'application/json'
             }
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success && data.data) {
-                // Update result box with solution data
-                this.updateResultBox(data.data);
-                
-                // Save solution to history
-                this.solutionHistory[this.currentSolver] = this.resultadoBox.innerHTML;
-                this.saveStateToStorage();
-                
-                // Re-render MathJax for new content
-                this.rerenderMathJax();
-            } else {
-                // Handle error case
-                this.showError(data.data?.error || 'Unknown error occurred');
-            }
-        })
-        .catch(error => {
-            console.error('Error submitting form:', error);
-            this.showError(`Error al enviar formulario: ${error.message}`);
-        });
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.data) {
+                    // Update result box with solution data
+                    this.updateResultBox(data.data);
+
+                    // Save solution to history
+                    this.solutionHistory[this.currentSolver] = this.resultadoBox.innerHTML;
+                    this.saveStateToStorage();
+
+                    // Re-render MathJax for new content
+                    this.rerenderMathJax();
+                } else {
+                    // Handle error case
+                    this.showError(data.data?.error || 'Unknown error occurred');
+                }
+            })
+            .catch(error => {
+                console.error('Error submitting form:', error);
+                this.showError(`Error al enviar formulario: ${error.message}`);
+            });
     }
 
     updateResultBox(data) {
@@ -403,7 +416,7 @@ class MathSolverApp {
                     </div>
                 `;
             }
-            
+
             // Render solution with proper formatting
             this.resultadoBox.innerHTML = `
                 <div class="p-6 bg-green-50 border border-green-200 rounded-lg">
@@ -446,7 +459,7 @@ class MathSolverApp {
             hintOverlay.className = 'fixed top-4 right-4 bg-white border border-gray-300 rounded-lg shadow-lg p-4 z-50 max-w-sm';
             document.body.appendChild(hintOverlay);
         }
-        
+
         hintOverlay.innerHTML = `
             <div class="flex justify-between items-center mb-3">
                 <h4 class="font-semibold text-gray-800">Atajos de Teclado</h4>
@@ -462,7 +475,7 @@ class MathSolverApp {
                 <p class="text-xs text-gray-500">Haz clic en cualquier función de la paleta para insertarla en el campo activo</p>
             </div>
         `;
-        
+
         // Auto-hide after 5 seconds
         setTimeout(() => {
             if (document.getElementById('function-hint-overlay')) {
@@ -504,7 +517,7 @@ class MathSolverApp {
                     typeset: false
                 }
             };
-            
+
             // Force initial render
             setTimeout(() => {
                 this.rerenderMathJax();
@@ -635,7 +648,7 @@ const solverTemplates = {
 // Initialize the app when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     window.mathSolverApp = new MathSolverApp();
-    
+
     // Handle server-side rendering
     if (window.djangoContext) {
         window.mathSolverApp.handleServerResponse(
@@ -650,7 +663,7 @@ window.MathSolverUtils = {
     formatNumber: (num) => {
         return parseFloat(num).toFixed(6).replace(/\.?0+$/, '');
     },
-    
+
     copyToClipboard: (text) => {
         navigator.clipboard.writeText(text).then(() => {
             // Show toast notification
@@ -658,13 +671,13 @@ window.MathSolverUtils = {
             toast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
             toast.textContent = '¡Copiado al portapapeles!';
             document.body.appendChild(toast);
-            
+
             setTimeout(() => {
                 toast.remove();
             }, 2000);
         });
     },
-    
+
     clearAllData: () => {
         if (confirm('¿Estás seguro de que quieres borrar todos los datos guardados?')) {
             localStorage.removeItem('mathSolverState');

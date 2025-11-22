@@ -51,8 +51,11 @@ def main_solver_view(request):
                 P_str = request.POST.get('bernoulli_p_function', '')
                 Q_str = request.POST.get('bernoulli_q_function', '')
                 n_str = request.POST.get('bernoulli_n_value', '')
+                # IVP parameters (optional)
+                x0_str = request.POST.get('bernoulli_x0', None)
+                y0_str = request.POST.get('bernoulli_y0', None)
                 # Llamar a la lógica del solver de Bernoulli
-                context.update(solve_bernoulli(P_str, Q_str, n_str))
+                context.update(solve_bernoulli(P_str, Q_str, n_str, x0_str, y0_str))
             
             # --- CORREGIDO: 'cauchy_euler' a 'cauchy' para coincidir con el HTML ---
             elif solver_type == 'cauchy':
@@ -75,16 +78,23 @@ def main_solver_view(request):
                 P_str = request.POST.get('riccati_p_function', '')
                 Q_str = request.POST.get('riccati_q_function', '')
                 R_str = request.POST.get('riccati_r_function', '')
+                # IVP parameters (optional)
+                x0_str = request.POST.get('riccati_x0', None)
+                y0_str = request.POST.get('riccati_y0', None)
                 # Llamar a la lógica del solver de Riccati
-                context.update(solve_riccati(P_str, Q_str, R_str))
+                context.update(solve_riccati(P_str, Q_str, R_str, x0_str, y0_str))
                 
             elif solver_type == 'second_order_homogeneous':
                 # --- Solver de segundo orden homogéneo ---
                 a_str = request.POST.get('second_a_val', '0')
                 b_str = request.POST.get('second_b_val', '0')
                 c_str = request.POST.get('second_c_val', '0')
+                # IVP parameters (optional)
+                x0_str = request.POST.get('second_x0', None)
+                y0_str = request.POST.get('second_y0', None)
+                y_prime_0_str = request.POST.get('second_y_prime_0', None)
                 # Llamar a la lógica del solver de segundo orden homogéneo
-                context.update(solve_second_order_homogeneous(a_str, b_str, c_str))
+                context.update(solve_second_order_homogeneous(a_str, b_str, c_str, x0_str, y0_str, y_prime_0_str))
                 
             elif solver_type == 'second_order_nonhomogeneous':
                 # --- Solver de segundo orden no homogéneo ---
@@ -92,8 +102,12 @@ def main_solver_view(request):
                 b_str = request.POST.get('second_b_val', '0')
                 c_str = request.POST.get('second_c_val', '0')
                 g_str = request.POST.get('second_g_function', '0')
+                # IVP parameters (optional)
+                x0_str = request.POST.get('second_x0', None)
+                y0_str = request.POST.get('second_y0', None)
+                y_prime_0_str = request.POST.get('second_y_prime_0', None)
                 # Llamar a la lógica del solver de segundo orden no homogéneo
-                context.update(solve_second_order_nonhomogeneous(a_str, b_str, c_str, g_str))
+                context.update(solve_second_order_nonhomogeneous(a_str, b_str, c_str, g_str, x0_str, y0_str, y_prime_0_str))
 
             else:
                 context = {'error': f'Tipo de solver desconocido: "{solver_type}"'}
