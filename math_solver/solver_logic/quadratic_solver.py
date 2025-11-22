@@ -31,18 +31,18 @@ def solve_quadratic(a_str: str, b_str: str, c_str: str) -> dict:
         
         # --- Generación de Pasos ---
         steps = []
-        steps.append(f"1. Se identifica la ecuación cuadrática en la forma \(ax^2 + bx + c = 0\):")
-        steps.append(f"   - \(a = {latex(a_expr)}\)")
-        steps.append(f"   - \(b = {latex(b_expr)}\)")
-        steps.append(f"   - \(c = {latex(c_expr)}\)")
+        steps.append(rf"1. Se identifica la ecuación cuadrática en la forma \(ax^2 + bx + c = 0\):")
+        steps.append(rf"   - \(a = {latex(a_expr)}\)")
+        steps.append(rf"   - \(b = {latex(b_expr)}\)")
+        steps.append(rf"   - \(c = {latex(c_expr)}\)")
         
         # 3. Calcular el Discriminante
         delta = discriminant(polinomio, x)
-        steps.append(f"2. Se calcula el discriminante (\(\Delta = b^2 - 4ac\)):")
-        steps.append(f"   - \(\Delta = ({latex(b_expr)})^2 - 4({latex(a_expr)})({latex(c_expr)}) = {latex(delta)}\)")
+        steps.append(rf"2. Se calcula el discriminante (\(\Delta = b^2 - 4ac\)):")
+        steps.append(rf"   - \(\Delta = ({latex(b_expr)})^2 - 4({latex(a_expr)})({latex(c_expr)}) = {latex(delta)}\)")
 
         # 4. Resolver usando la fórmula cuadrática
-        steps.append(f"3. Se aplica la fórmula cuadrática (\(x = \\frac{{-b \\pm \\sqrt{{\Delta}}}}{{2a}}\)):")
+        steps.append(rf"3. Se aplica la fórmula cuadrática (\(x = \frac{{-b \pm \sqrt{{\Delta}}}}{{2a}}\)):")
         
         # solve() encuentra los valores de 'x' que satisfacen la ecuación
         raices = solve(ecuacion, x)
