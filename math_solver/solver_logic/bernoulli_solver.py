@@ -41,44 +41,56 @@ def solve_bernoulli(P_str: str, Q_str: str, n_str: str, x0_str: str = None, y0_s
     try:
         # 2. Construir Ecuación Original
         ecuacion_original = Eq(y.diff(x) + p_expr * y, q_expr * y**n_expr)
-        steps.append(rf"La ecuación de Bernoulli es: \( {latex(ecuacion_original)} \)")
-        steps.append(rf"   - Con \( P(x) = {latex(p_expr)} \), \( Q(x) = {latex(q_expr)} \) y \( n = {latex(n_expr)} \).")
+        ecuacion_latex = latex(ecuacion_original)
+        p_latex = latex(p_expr)
+        q_latex = latex(q_expr)
+        n_latex = latex(n_expr)
+
+        # 1. Mostrar la ecuación original
+        steps.append("### 📚 Ecuación de Bernoulli")
+        steps.append(f"**Ecuación:** $${ecuacion_latex}$$")
         
-        # 2b. Mostrar condiciones iniciales si es IVP
+        # 2. Identificar P(x), Q(x) y n
+        steps.append("**Parámetros Identificados:**")
+        steps.append(f"  - $$P(x) = {p_latex}$$")
+        steps.append(f"  - $$Q(x) = {q_latex}$$")
+        steps.append(f"  - $$n = {n_latex}$$")
+        
         if is_ivp:
-            steps.append(rf"**Problema de Valor Inicial (IVP)**:")
-            steps.append(rf"   - Condición inicial: \( y({latex(x0_expr)}) = {latex(y0_expr)} \)")
+            steps.append(rf"**Problema de Valor Inicial (IVP)**")
+            steps.append(rf"  - Condición inicial: $$y({latex(x0_expr)}) = {latex(y0_expr)}$$")
 
         # 3. Manejo de Casos Especiales
         if n_expr == 0:
-            steps.append("3. **Caso Especial: n = 0**")
-            steps.append(r"   - La ecuación se convierte en: \( y' + P(x)y = Q(x) \)")
-            steps.append("   - Esta es una ecuación diferencial lineal de primer orden.")
+            steps.append("### ⚡ Caso Especial: n = 0")
+            steps.append(r"**Teoría:** La ecuación se convierte en lineal:")
+            steps.append(r"  - $$y' + P(x)y = Q(x)$$")
             
             # Resolver como ecuación lineal
             ecuacion_lineal = Eq(y.diff(x) + p_expr * y, q_expr)
-            steps.append(rf"   - Ecuación lineal: \( {latex(ecuacion_lineal)} \)")
+            steps.append(rf"**Ecuación Lineal:** $${latex(ecuacion_lineal)}$$")
             
             # Resolver con o sin IVP
             if is_ivp:
                 ics = {y.subs(x, x0_expr): y0_expr}
                 sol_y = dsolve(ecuacion_lineal, y, ics=ics)
-                steps.append(f"   - Solución usando método de ecuación lineal con IVP: {format_latex(sol_y)}")
+                steps.append("### ✅ Solución Final")
+                steps.append(f"  - Solución con IVP: {format_latex(sol_y)}")
             else:
                 sol_y = dsolve(ecuacion_lineal, y)
-                steps.append(f"   - Solución usando método de ecuación lineal: {format_latex(sol_y)}")
+                steps.append("### ✅ Solución Final")
+                steps.append(f"  - Solución general: {format_latex(sol_y)}")
             
             solucion_latex = format_latex(sol_y)
             
         elif n_expr == 1:
-            steps.append("3. **Caso Especial: n = 1**")
-            steps.append(r"   - La ecuación se convierte en: \( y' + P(x)y = Q(x)y \)")
-            steps.append(r"   - Reorganizando: \( y' = (Q(x) - P(x))y \)")
-            steps.append("   - Esta es una ecuación separable.")
+            steps.append("### ⚡ Caso Especial: n = 1")
+            steps.append(r"**Teoría:** La ecuación se convierte en separable:")
+            steps.append(r"  - $$y' + P(x)y = Q(x)y \implies y' = (Q(x) - P(x))y$$")
             
             # Resolver como ecuación separable
             q_menos_p = q_expr - p_expr
-            steps.append(rf"   - Ecuación separable: \( \frac{{dy}}{{y}} = ({latex(q_menos_p)})dx \)")
+            steps.append(rf"**Ecuación Separable:** $$\frac{{dy}}{{y}} = ({latex(q_menos_p)})dx$$")
             
             # Integrar ambos lados
             integral_izq = log(y)
@@ -89,42 +101,56 @@ def solve_bernoulli(P_str: str, Q_str: str, n_str: str, x0_str: str = None, y0_s
             if is_ivp:
                 ics = {y.subs(x, x0_expr): y0_expr}
                 sol_y = dsolve(ecuacion_original, y, ics=ics)
-                steps.append(f"   - Solución por separación de variables con IVP: {format_latex(sol_y)}")
+                steps.append("### ✅ Solución Final")
+                steps.append(f"  - Solución con IVP: {format_latex(sol_y)}")
             else:
                 sol_y = dsolve(ecuacion_original, y)
-                steps.append(f"   - Solución por separación de variables: {format_latex(sol_y)}")
+                steps.append("### ✅ Solución Final")
+                steps.append(f"  - Solución general: {format_latex(sol_y)}")
                 
             solucion_latex = format_latex(sol_y)
             
         else:
             # 4. Transformación a Lineal (caso general)
-            steps.append("3. **Caso General: n ≠ 0, 1**")
+            steps.append("### 🔄 Transformación a Lineal")
             v = Function('v')(x)
             m = 1 - n_expr
-            steps.append(rf"Se aplica la sustitución \( v = y^{{1-n}} = y^{{{m}}} \). Esto la convierte en una EDO lineal.")
+            
+            steps.append(r"**Teoría:** Para $$n \neq 0, 1$$, usamos la sustitución de Bernoulli.")
+            steps.append(r"**Paso 1:** Dividir por $$y^n$$:")
+            steps.append(r"  - $$y^{-n}y' + P(x)y^{1-n} = Q(x)$$")
+            
+            steps.append(rf"**Paso 2:** Sustitución $$v = y^{{1-n}}$$ (donde $$1-n = {latex(m)}$$):")
+            steps.append(r"  - $$v' = (1-n)y^{-n}y'$$")
+            steps.append(r"  - $$\frac{v'}{1-n} = y^{-n}y'$$")
+            
+            steps.append(r"**Paso 3:** Ecuación Lineal Resultante:")
+            steps.append(r"  - $$\frac{v'}{1-n} + P(x)v = Q(x)$$")
+            steps.append(r"  - $$v' + (1-n)P(x)v = (1-n)Q(x)$$")
             
             # Ecuación lineal en v: v' + (1-n)P(x)v = (1-n)Q(x)
             p_lineal = m * p_expr
             q_lineal = m * q_expr
             ecuacion_lineal = Eq(v.diff(x) + p_lineal * v, q_lineal)
-            steps.append(rf"   - La ecuación lineal transformada para \(v(x)\) es: \( {latex(ecuacion_lineal)} \)")
+            steps.append(rf"**Ecuación Lineal para v(x):** $${latex(ecuacion_lineal)}$$")
 
             # 5. Resolver la Ecuación Lineal para v(x)
-            steps.append(rf"Se resuelve la ecuación lineal para \(v(x)\), usualmente con un factor integrante.")
+            steps.append(rf"**Paso 4:** Resolver para v(x):")
             sol_v = dsolve(ecuacion_lineal, v)
-            steps.append(rf"   - La solución para \(v(x)\) es: \( {latex(sol_v)} \)")
+            steps.append(rf"  - Solución intermedia: $${latex(sol_v)}$$")
 
             # 6. Sustituir de Vuelta a y(x)
-            steps.append(rf"Finalmente, se sustituye \( v = y^{{{m}}} \) para obtener la solución para \(y(x)\).")
+            steps.append("### ✅ Solución Final")
+            steps.append(rf"**Paso 5:** Sustituir $$v = y^{{{latex(m)}}}$$:")
             
             # Resolver con o sin IVP
             if is_ivp:
                 ics = {y.subs(x, x0_expr): y0_expr}
                 sol_y = dsolve(ecuacion_original, y, ics=ics)
-                steps.append(f"   - La solución final con IVP es: {format_latex(sol_y)}")
+                steps.append(f"  - Solución con IVP: {format_latex(sol_y)}")
             else:
                 sol_y = dsolve(ecuacion_original, y)
-                steps.append(f"   - La solución final es: {format_latex(sol_y)}")
+                steps.append(f"  - Solución general: {format_latex(sol_y)}")
                 
             solucion_latex = format_latex(sol_y)
 

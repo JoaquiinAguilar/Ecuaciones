@@ -404,15 +404,78 @@ class MathSolverApp {
         if (data.error) {
             this.showError(data.error);
         } else if (data.solucion) {
-            // Generate steps HTML if steps exist
+            // Generate steps HTML with better design
             let stepsHtml = '';
             if (data.steps && data.steps.length > 0) {
+                // Parse steps to create sections
+                let sectionsHtml = '';
+                let currentSection = [];
+                let inSection = false;
+
+                data.steps.forEach((step, index) => {
+                    const trimmedStep = step.trim();
+
+                    // Helper to close current numbered list section
+                    const closeSection = () => {
+                        if (currentSection.length > 0) {
+                            sectionsHtml += `<ol class="list-decimal list-inside space-y-2 text-gray-700 mb-4">${currentSection.join('')}</ol>`;
+                            currentSection = [];
+                        }
+                    };
+
+                    // 1. Main Headers (###)
+                    if (trimmedStep.startsWith('###')) {
+                        closeSection();
+                        // Remove ### and any bold markers for the title
+                        const headerText = trimmedStep.replace(/^###\s*/, '').replace(/\*\*/g, '').trim();
+                        sectionsHtml += `<div class="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 p-4 mb-4 rounded-r-lg shadow-sm"><h4 class="font-bold text-lg text-blue-800 flex items-center">${headerText}</h4></div>`;
+                    }
+                    // 2. Separators (---)
+                    else if (trimmedStep === '---') {
+                        closeSection();
+                        sectionsHtml += `<hr class="my-6 border-t-2 border-gray-200">`;
+                    }
+                    // 3. Subheaders (Method titles, Connection, etc)
+                    // Matches: "**Método X...**", "Método X:", "**Conexión...**", or any fully bold line that isn't a Step
+                    else if (
+                        /^\*\*Método/.test(trimmedStep) ||
+                        /^Método\s+\d+/.test(trimmedStep) ||
+                        /^\*\*Conexión/.test(trimmedStep) ||
+                        (trimmedStep.startsWith('**') && trimmedStep.endsWith('**') && !trimmedStep.includes('Paso'))
+                    ) {
+                        closeSection();
+                        const title = trimmedStep.replace(/\*\*/g, '');
+                        sectionsHtml += `<div class="mt-5 mb-3"><span class="font-bold text-base text-indigo-700 px-3 py-1 bg-indigo-50 rounded-full border border-indigo-200">${title}</span></div>`;
+                    }
+                    // 4. Theory/Notes (Bold label at start: "**Teoría:** ...")
+                    else if (/^\*\*Teoría:?\*\*/.test(trimmedStep) || /^\*\*Nota:?\*\*/.test(trimmedStep)) {
+                        closeSection();
+                        // Convert markdown bold to HTML bold
+                        const htmlContent = trimmedStep.replace(/\*\*(.*?)\*\*/g, '<span class="font-bold text-gray-900">$1</span>');
+                        sectionsHtml += `<div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 mb-4 text-gray-700 text-sm rounded-r">${htmlContent}</div>`;
+                    }
+                    // 5. Steps (Paso A, or regular steps)
+                    else {
+                        // Format "**Paso X:**" nicely if present
+                        let content = step;
+                        if (content.trim().startsWith('**Paso')) {
+                            content = content.replace(/^\*\*(Paso\s+[A-Z0-9]+:?)\*\*/, '<span class="font-bold text-blue-700">$1</span>');
+                        }
+                        currentSection.push(`<li class="mb-2 pl-1 leading-relaxed">${content}</li>`);
+                    }
+                });
+
+                // Close final section
+                if (currentSection.length > 0) {
+                    sectionsHtml += `<ol class="list-decimal list-inside space-y-2 text-gray-700">${currentSection.join('')}</ol>`;
+                }
+
                 stepsHtml = `
-                    <div class="mt-6 pt-4 border-t border-gray-200">
-                        <p class="font-bold text-xl mb-4 text-blue-700">Pasos de la Solución:</p>
-                        <ol class="list-decimal list-inside space-y-2 text-gray-800">
-                            ${data.steps.map(step => `<li>${step}</li>`).join('')}
-                        </ol>
+                    <div class="mt-6 pt-6 border-t-2 border-gray-300">
+                        <p class="font-bold text-2xl mb-6 text-blue-700">📝 Pasos de la Solución</p>
+                        <div class="space-y-2">
+                            ${sectionsHtml}
+                        </div>
                     </div>
                 `;
             }
@@ -427,6 +490,9 @@ class MathSolverApp {
                     ${stepsHtml}
                 </div>
             `;
+
+            // CRITICAL: Re-render MathJax after inserting new content
+            this.rerenderMathJax();
         } else {
             this.showError('No se recibió una solución válida');
         }

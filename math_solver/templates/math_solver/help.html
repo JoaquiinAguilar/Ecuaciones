@@ -8,8 +8,10 @@
         <!-- Header -->
         <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
             <div class="flex items-center justify-between mb-6">
-                <h1 class="text-3xl font-bold text-gray-800">📚 Guía de Uso - Math Solver Pro</h1>
-                <a href="{% url 'math_solver:main_solver_view' %}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                <h1 class="text-3xl font-bold text-gray-800">📚 Guía de Uso - App de Ecuaciones Diferenciales no
+                    Lineales</h1>
+                <a href="{% url 'math_solver:main_solver_view' %}"
+                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                     ← Volver al Solver
                 </a>
             </div>
@@ -23,21 +25,25 @@
             <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
                 <span class="text-3xl mr-3">🚀</span> Inicio Rápido
             </h2>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
                     <h3 class="font-semibold text-blue-800 mb-3">1. Selecciona un Tipo de Ecuación</h3>
                     <p class="text-gray-700 mb-4">Elige entre las diferentes opciones en el panel izquierdo:</p>
                     <ul class="space-y-2 text-sm text-gray-600">
-                        <li>• <strong>Cuadrática:</strong> ax² + bx + c = 0</li>
-                        <li>• <strong>Bernoulli:</strong> y' + P(x)y = Q(x)yⁿ</li>
-                        <li>• <strong>Cauchy-Euler:</strong> ax²y'' + bxy' + cy = R(x)</li>
-                        <li>• <strong>Clairaut:</strong> y = xy' + f(y')</li>
-                        <li>• <strong>Riccati:</strong> y' = P(x)y² + Q(x)y + R(x)</li>
-                        <li>• <strong>Segundo Orden:</strong> ay'' + by' + cy = g(x)</li>
+                        <li>• <strong>Ecuación polinómica de segundo grado (Cuadrática):</strong> ax² + bx + c = 0</li>
+                        <li>• <strong>Ecuación diferencial ordinaria de primer orden no lineal (Bernoulli):</strong> y'
+                            + P(x)y = Q(x)yⁿ</li>
+                        <li>• <strong>Ecuación diferencial lineal de segundo orden con coeficientes variables
+                                (Cauchy-Euler):</strong> ax²y'' + bxy' + cy = R(x)</li>
+                        <li>• <strong>Ecuación diferencial ordinaria de primer orden no lineal (Clairaut):</strong> y =
+                            xy' + f(y')</li>
+                        <li>• <strong>Ecuación diferencial ordinaria de primer orden no lineal (Riccati):</strong> y' =
+                            P(x)y² + Q(x)y + R(x)</li>
+                        <li>• <strong>Segundo Orden (Homogéneo/No Homogéneo):</strong> ay'' + by' + cy = g(x)</li>
                     </ul>
                 </div>
-                
+
                 <div class="bg-green-50 border border-green-200 rounded-lg p-6">
                     <h3 class="font-semibold text-green-800 mb-3">2. Ingresa los Parámetros</h3>
                     <p class="text-gray-700 mb-4">Completa los campos con tus valores matemáticos:</p>
@@ -49,7 +55,7 @@
                     </ul>
                 </div>
             </div>
-            
+
             <div class="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-6">
                 <h3 class="font-semibold text-yellow-800 mb-3">3. Obtén tu Solución</h3>
                 <p class="text-gray-700">Presiona el botón "Resolver Ecuación" y obtén resultados detallados con:</p>
@@ -67,7 +73,7 @@
             <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
                 <span class="text-3xl mr-3">🎛️</span> Paleta de Funciones
             </h2>
-            
+
             <div class="space-y-6">
                 <div>
                     <h3 class="font-semibold text-gray-800 mb-3">Cómo Usar la Paleta</h3>
@@ -76,7 +82,8 @@
                             <li><strong>1.</strong> Haz clic en cualquier campo de entrada para activarlo</li>
                             <li><strong>2.</strong> Haz clic en un botón de función para insertarlo</li>
                             <li><strong>3.</strong> La función se insertará en la posición del cursor</li>
-                            <li><strong>4.</strong> Usa <kbd class="px-2 py-1 bg-gray-200 rounded text-xs">Ctrl+Space</kbd> para ver atajos</li>
+                            <li><strong>4.</strong> Usa <kbd
+                                    class="px-2 py-1 bg-gray-200 rounded text-xs">Ctrl+Space</kbd> para ver atajos</li>
                         </ol>
                     </div>
                 </div>
@@ -91,7 +98,7 @@
                             <code>abs(x)</code> - Valor absoluto
                         </div>
                     </div>
-                    
+
                     <div>
                         <h4 class="font-medium text-gray-800 mb-2">Funciones Avanzadas</h4>
                         <div class="bg-gray-50 rounded-lg p-3 text-sm">
@@ -110,23 +117,23 @@
             <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
                 <span class="text-3xl mr-3">⌨️</span> Atajos de Teclado
             </h2>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
                     <kbd class="px-3 py-2 bg-gray-200 border border-gray-300 rounded font-mono">Ctrl+Space</kbd>
                     <span class="text-gray-700">Mostrar ayuda de atajos</span>
                 </div>
-                
+
                 <div class="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
                     <kbd class="px-3 py-2 bg-gray-200 border border-gray-300 rounded font-mono">Tab</kbd>
                     <span class="text-gray-700">Navegar entre campos</span>
                 </div>
-                
+
                 <div class="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
                     <kbd class="px-3 py-2 bg-gray-200 border border-gray-300 rounded font-mono">Enter</kbd>
                     <span class="text-gray-700">Resolver ecuación</span>
                 </div>
-                
+
                 <div class="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
                     <kbd class="px-3 py-2 bg-gray-200 border border-gray-300 rounded font-mono">Escape</kbd>
                     <span class="text-gray-700">Cerrar ventanas de ayuda</span>
@@ -139,32 +146,106 @@
             <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
                 <span class="text-3xl mr-3">💡</span> Ejemplos Prácticos
             </h2>
-            
+
             <div class="space-y-6">
                 <div class="border-l-4 border-blue-500 pl-6">
-                    <h3 class="font-semibold text-gray-800 mb-2">Ecuación Cuadrática</h3>
+                    <h3 class="font-semibold text-gray-800 mb-2">Ecuación polinómica de segundo grado (Cuadrática)</h3>
                     <p class="text-gray-600 mb-2">Resolver: x² - 5x + 6 = 0</p>
                     <div class="bg-gray-50 rounded p-3 text-sm">
                         <strong>Parámetros:</strong> a=1, b=-5, c=6<br>
                         <strong>Solución:</strong> x₁=3, x₂=2
                     </div>
                 </div>
-                
+
                 <div class="border-l-4 border-green-500 pl-6">
-                    <h3 class="font-semibold text-gray-800 mb-2">Ecuación de Bernoulli</h3>
+                    <h3 class="font-semibold text-gray-800 mb-2">Ecuación diferencial ordinaria de primer orden no
+                        lineal (Bernoulli)</h3>
                     <p class="text-gray-600 mb-2">Resolver: y' + (2/x)y = xy²</p>
                     <div class="bg-gray-50 rounded p-3 text-sm">
                         <strong>Parámetros:</strong> P(x)=2/x, Q(x)=x, n=2<br>
                         <strong>Solución:</strong> y = 1/(Cx² - x³/3)
                     </div>
                 </div>
-                
+
                 <div class="border-l-4 border-purple-500 pl-6">
-                    <h3 class="font-semibold text-gray-800 mb-2">Ecuación de Riccati</h3>
+                    <h3 class="font-semibold text-gray-800 mb-2">Ecuación diferencial ordinaria de primer orden no
+                        lineal (Riccati)</h3>
                     <p class="text-gray-600 mb-2">Resolver: y' = y² - xy + 1</p>
                     <div class="bg-gray-50 rounded p-3 text-sm">
                         <strong>Parámetros:</strong> P(x)=1, Q(x)=-x, R(x)=1<br>
                         <strong>Solución:</strong> y = x + (e^(-x²))/(C - ∫e^(-x²)dx)
+                    </div>
+                </div>
+
+                <div class="border-l-4 border-indigo-500 pl-6">
+                    <h3 class="font-semibold text-gray-800 mb-2">Ecuación diferencial lineal de segundo orden con
+                        coeficientes variables (Cauchy-Euler)</h3>
+                    <p class="text-gray-600 mb-2">Resolver: x²y'' + xy' - y = 0</p>
+                    <div class="bg-gray-50 rounded p-3 text-sm">
+                        <strong>Parámetros:</strong> a=1, b=1, c=-1, R(x)=0<br>
+                        <strong>Solución:</strong> y = C₁x + C₂x⁻¹<br>
+                        <strong>Nota:</strong> Ecuación homogénea de Cauchy-Euler con raíces r₁=1, r₂=-1
+                    </div>
+                </div>
+
+                <div class="border-l-4 border-pink-500 pl-6">
+                    <h3 class="font-semibold text-gray-800 mb-2">Ecuación diferencial ordinaria de primer orden no
+                        lineal (Clairaut)</h3>
+                    <p class="text-gray-600 mb-2">Resolver: y = xy' + (y')²</p>
+                    <div class="bg-gray-50 rounded p-3 text-sm">
+                        <strong>Parámetros:</strong> f(p) = p**2 (donde p representa y')<br>
+                        <strong>Solución General:</strong> y = Cx + C²<br>
+                        <strong>Solución Singular:</strong> También puede tener envolvente singular
+                    </div>
+                </div>
+
+                <div class="border-l-4 border-teal-500 pl-6">
+                    <h3 class="font-semibold text-gray-800 mb-2">Ecuación diferencial lineal de segundo orden con
+                        coeficientes constantes homogénea (Homogéneo)</h3>
+                    <p class="text-gray-600 mb-2">Resolver: y'' + 4y' + 4y = 0</p>
+                    <div class="bg-gray-50 rounded p-3 text-sm">
+                        <strong>Parámetros:</strong> a=1, b=4, c=4<br>
+                        <strong>Ecuación característica:</strong> r² + 4r + 4 = 0<br>
+                        <strong>Raíces:</strong> r = -2 (raíz doble)<br>
+                        <strong>Solución:</strong> y = (C₁ + C₂x)e⁻²ˣ
+                    </div>
+                </div>
+
+                <div class="border-l-4 border-orange-500 pl-6">
+                    <h3 class="font-semibold text-gray-800 mb-2">Ecuación diferencial lineal de segundo orden con
+                        coeficientes constantes homogénea (Homogéneo) - Raíces Complejas</h3>
+                    <p class="text-gray-600 mb-2">Resolver: y'' + 4y = 0</p>
+                    <div class="bg-gray-50 rounded p-3 text-sm">
+                        <strong>Parámetros:</strong> a=1, b=0, c=4<br>
+                        <strong>Ecuación característica:</strong> r² + 4 = 0<br>
+                        <strong>Raíces:</strong> r = ±2i (complejas conjugadas)<br>
+                        <strong>Solución:</strong> y = C₁cos(2x) + C₂sin(2x)
+                    </div>
+                </div>
+
+                <div class="border-l-4 border-red-500 pl-6">
+                    <h3 class="font-semibold text-gray-800 mb-2">Ecuación diferencial lineal de segundo orden con
+                        coeficientes constantes no homogénea (No Homogéneo)</h3>
+                    <p class="text-gray-600 mb-2">Resolver: y'' - 3y' + 2y = exp(x)</p>
+                    <div class="bg-gray-50 rounded p-3 text-sm">
+                        <strong>Parámetros:</strong> a=1, b=-3, c=2, g(x)=exp(x)<br>
+                        <strong>Solución homogénea:</strong> y_h = C₁e^x + C₂e^(2x)<br>
+                        <strong>Solución particular:</strong> Se busca usando método de coeficientes indeterminados o
+                        variación de parámetros<br>
+                        <strong>Solución general:</strong> y = y_h + y_p
+                    </div>
+                </div>
+
+                <div class="border-l-4 border-cyan-500 pl-6">
+                    <h3 class="font-semibold text-gray-800 mb-2">Ejemplo con Condiciones Iniciales (IVP) - Bernoulli
+                    </h3>
+                    <p class="text-gray-600 mb-2">Resolver: y' - 5y = -5x·y³/2, y(0) = 1</p>
+                    <div class="bg-gray-50 rounded p-3 text-sm">
+                        <strong>Parámetros:</strong> P(x)=-5, Q(x)=-5/2*x, n=3<br>
+                        <strong>Condiciones iniciales:</strong> x₀=0, y₀=1<br>
+                        <strong>Solución general:</strong> Primero se resuelve sin IVP<br>
+                        <strong>Solución particular:</strong> Se aplican las condiciones iniciales para encontrar la
+                        constante específica
                     </div>
                 </div>
             </div>
@@ -175,40 +256,44 @@
             <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
                 <span class="text-3xl mr-3">✨</span> Consejos y Trucos
             </h2>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="space-y-4">
                     <div class="flex items-start space-x-3">
                         <span class="text-2xl">💾</span>
                         <div>
                             <h4 class="font-semibold text-gray-800">Persistencia Automática</h4>
-                            <p class="text-gray-600 text-sm">Tus datos y soluciones se guardan automáticamente. Puedes cambiar de pestaña y volver sin perder información.</p>
+                            <p class="text-gray-600 text-sm">Tus datos y soluciones se guardan automáticamente. Puedes
+                                cambiar de pestaña y volver sin perder información.</p>
                         </div>
                     </div>
-                    
+
                     <div class="flex items-start space-x-3">
                         <span class="text-2xl">🔄</span>
                         <div>
                             <h4 class="font-semibold text-gray-800">Navegación Rápida</h4>
-                            <p class="text-gray-600 text-sm">Usa los botones de navegación para cambiar rápidamente entre tipos de ecuaciones sin perder tu progreso.</p>
+                            <p class="text-gray-600 text-sm">Usa los botones de navegación para cambiar rápidamente
+                                entre tipos de ecuaciones sin perder tu progreso.</p>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="space-y-4">
                     <div class="flex items-start space-x-3">
                         <span class="text-2xl">📐</span>
                         <div>
                             <h4 class="font-semibold text-gray-800">Notación Matemática</h4>
-                            <p class="text-gray-600 text-sm">Usa ** para potencias, * para multiplicación y expresiones estándar como sin(x), exp(x), etc.</p>
+                            <p class="text-gray-600 text-sm">Usa ** para potencias, * para multiplicación y expresiones
+                                estándar como sin(x), exp(x), etc.</p>
                         </div>
                     </div>
-                    
+
                     <div class="flex items-start space-x-3">
                         <span class="text-2xl">⚡</span>
                         <div>
                             <h4 class="font-semibold text-gray-800">Rendimiento</h4>
-                            <p class="text-gray-600 text-sm">El sistema usa AJAX para respuestas instantáneas sin recargar la página, haciendo la experiencia más fluida.</p>
+                            <p class="text-gray-600 text-sm">El sistema usa AJAX para respuestas instantáneas sin
+                                recargar la página, haciendo la experiencia más fluida.</p>
                         </div>
                     </div>
                 </div>
@@ -220,31 +305,36 @@
             <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
                 <span class="text-3xl mr-3">❓</span> Preguntas Frecuentes
             </h2>
-            
+
             <div class="space-y-4">
                 <div class="border-b border-gray-200 pb-4">
                     <h3 class="font-semibold text-gray-800 mb-2">¿Qué variable debo usar?</h3>
-                    <p class="text-gray-600">Usa siempre <code>x</code> como variable independiente en tus expresiones.</p>
+                    <p class="text-gray-600">Usa siempre <code>x</code> como variable independiente en tus expresiones.
+                    </p>
                 </div>
-                
+
                 <div class="border-b border-gray-200 pb-4">
                     <h3 class="font-semibold text-gray-800 mb-2">¿Cómo ingreso fracciones?</h3>
-                    <p class="text-gray-600">Usa la notación <code>1/x</code> o <code>(numerator)/(denominator)</code> para fracciones.</p>
+                    <p class="text-gray-600">Usa la notación <code>1/x</code> o <code>(numerator)/(denominator)</code>
+                        para fracciones.</p>
                 </div>
-                
+
                 <div class="border-b border-gray-200 pb-4">
                     <h3 class="font-semibold text-gray-800 mb-2">¿Puedo usar números complejos?</h3>
-                    <p class="text-gray-600">Sí, puedes usar <code>I</code> para la unidad imaginaria y expresiones complejas.</p>
+                    <p class="text-gray-600">Sí, puedes usar <code>I</code> para la unidad imaginaria y expresiones
+                        complejas.</p>
                 </div>
-                
+
                 <div class="border-b border-gray-200 pb-4">
                     <h3 class="font-semibold text-gray-800 mb-2">¿Qué pasa si hay un error?</h3>
-                    <p class="text-gray-600">El sistema mostrará mensajes de error detallados. Verifica tu sintaxis y asegúrate de usar los formatos correctos.</p>
+                    <p class="text-gray-600">El sistema mostrará mensajes de error detallados. Verifica tu sintaxis y
+                        asegúrate de usar los formatos correctos.</p>
                 </div>
-                
+
                 <div>
                     <h3 class="font-semibold text-gray-800 mb-2">¿Se guardan mis datos?</h3>
-                    <p class="text-gray-600">Los datos se guardan localmente en tu navegador usando localStorage. No se envían a servidores externos.</p>
+                    <p class="text-gray-600">Los datos se guardan localmente en tu navegador usando localStorage. No se
+                        envían a servidores externos.</p>
                 </div>
             </div>
         </div>

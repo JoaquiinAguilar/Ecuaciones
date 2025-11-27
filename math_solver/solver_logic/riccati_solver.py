@@ -65,13 +65,50 @@ def solve_riccati(P_str: str, Q_str: str, R_str: str, x0_str: str = None, y0_str
         q_latex = latex(q_expr)
         r_latex = latex(r_expr)
         
-        steps.append(f"1. La ecuación de Riccati es: $${ecuacion_latex}$$")
-        steps.append(f"   - Con $$P(x) = {p_latex}$$, $$Q(x) = {q_latex}$$ y $$R(x) = {r_latex}$$.")
+        steps.append(f"La ecuación de Riccati es:")
+        steps.append(f"$${ecuacion_latex}$$")
+        steps.append(f"Con: $$P(x) = {p_latex}$$, $$Q(x) = {q_latex}$$, $$R(x) = {r_latex}$$")
         
         # 1b. Mostrar condiciones iniciales si es IVP
         if is_ivp:
-            steps.append(rf"**Problema de Valor Inicial (IVP)**:")
-            steps.append(rf"   - Condición inicial: \\( y({latex(x0_expr)}) = {latex(y0_expr)} \\)")
+            steps.append(rf"**Problema de Valor Inicial (IVP)**")
+            steps.append(rf"Condición inicial: $$y({latex(x0_expr)}) = {latex(y0_expr)}$$")
+        
+        # === EDUCATIONAL SECTION: Riccati to Bernoulli Deduction ===
+        steps.append("---")
+        steps.append("### 📚 **Deducción: Riccati → Bernoulli (Referencia: Página 67)**")
+        steps.append("**Teoría:** La ecuación de Riccati se puede transformar en una ecuación de Bernoulli (y luego lineal) mediante una sustitución adecuada.")
+        
+        steps.append("**Método 1: Sustitución con Solución Particular**")
+        steps.append(r"**Paso A:** Si conocemos una solución particular \( y_1(x) \) de la ecuación de Riccati:")
+        steps.append(r"  - \( y' = P(x)y^2 + Q(x)y + R(x) \)")
+        steps.append(r"**Paso B:** Proponemos la sustitución \( y = y_1 + \frac{1}{z} \)")
+        steps.append(r"  - Donde \( z \) es una nueva función a determinar")
+        steps.append(r"**Paso C:** Calculamos \( y' \):")
+        steps.append(r"  - \( y' = y_1' - \frac{z'}{z^2} \)")
+        steps.append(r"**Paso D:** Sustituimos en la ecuación de Riccati:")
+        steps.append(r"  - \( y_1' - \frac{z'}{z^2} = P(x)\left(y_1 + \frac{1}{z}\right)^2 + Q(x)\left(y_1 + \frac{1}{z}\right) + R(x) \)")
+        steps.append(r"**Paso E:** Expandimos y simplificamos (usando que \( y_1 \) satisface la ecuación):")
+        steps.append(r"  - Después de álgebra: \( -\frac{z'}{z^2} = P(x)\left(\frac{2y_1}{z} + \frac{1}{z^2}\right) + \frac{Q(x)}{z} \)")
+        steps.append(r"**Paso F:** Multiplicamos por \( -z^2 \):")
+        steps.append(r"  - \( z' = -P(x)(2y_1 z + 1) - Q(x)z \)")
+        steps.append(r"  - \( z' = -[2P(x)y_1 + Q(x)]z - P(x) \)")
+        steps.append(r"**Resultado:** ✅ Esta es una **EDO lineal de primer orden** para \( z \)!")
+        steps.append(r"  - Forma: \( z' + [2P(x)y_1 + Q(x)]z = -P(x) \)")
+        
+        steps.append("**Método 2: Transformación Directa (Caso General)**")
+        steps.append(r"Si no conocemos \( y_1 \), podemos usar la sustitución \( y = -\frac{u'}{P(x)u} \):")
+        steps.append(r"**Paso A:** Calculamos \( y' \) usando esta sustitución")
+        steps.append(r"**Paso B:** Sustituimos en la ecuación de Riccati")
+        steps.append(r"**Paso C:** Obtenemos: \( u'' - Q(x)u' - P(x)R(x)u = 0 \)")
+        steps.append(r"  - ✅ Esta es una **EDO lineal de segundo orden**!")
+        
+        steps.append("**Conexión con Bernoulli:**")
+        steps.append(r"  - La ecuación lineal obtenida es equivalente a una ecuación de Bernoulli con \( n = 0 \)")
+        steps.append(r"  - Bernoulli con \( n = 0 \): \( y' + P(x)y = Q(x) \) (lineal)")
+        steps.append(r"  - Por lo tanto: **Riccati → Lineal (Bernoulli n=0) → Solución**")
+        steps.append("---")
+        steps.append("### 🔧 **Resolución Computacional**")
         
         # Método 1: Intentar dsolve directo primero
         steps.append("2. **Intentando método directo con SymPy**...")
